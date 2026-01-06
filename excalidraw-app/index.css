@@ -1,0 +1,14 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Nunito", "Virgil", "Segoe UI", system-ui, sans-serif;
+}
+
+.app-root {
+  height: 100%;
+}
