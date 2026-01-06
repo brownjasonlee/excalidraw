@@ -70,7 +70,6 @@ import {
   extraToolsIcon,
   frameToolIcon,
   mermaidLogoIcon,
-  laserPointerToolIcon,
   MagicIcon,
   LassoIcon,
   sharpArrowIcon,
@@ -340,7 +339,6 @@ const CombinedShapeProperties = ({
     (appState.activeTool.type !== "selection" &&
       appState.activeTool.type !== "eraser" &&
       appState.activeTool.type !== "hand" &&
-      appState.activeTool.type !== "laser" &&
       appState.activeTool.type !== "lasso");
   const isOpen = appState.openPopup === "compactStrokeStyles";
 
@@ -1067,7 +1065,6 @@ export const ShapesSwitcher = ({
   ] as const;
 
   const frameToolSelected = activeTool.type === "frame";
-  const laserToolSelected = activeTool.type === "laser";
   const lassoToolSelected =
     isFullStylesPanel &&
     activeTool.type === "lasso" &&
@@ -1182,11 +1179,7 @@ export const ShapesSwitcher = ({
             "App-toolbar__extra-tools-trigger--selected":
               frameToolSelected ||
               embeddableToolSelected ||
-              lassoToolSelected ||
-              // in collab we're already highlighting the laser button
-              // outside toolbar, so let's not highlight extra-tools button
-              // on top of it
-              (laserToolSelected && !app.props.isCollaborating),
+              lassoToolSelected,
           })}
           onToggle={() => {
             setIsExtraToolsMenuOpen(!isExtraToolsMenuOpen);
@@ -1198,8 +1191,6 @@ export const ShapesSwitcher = ({
             ? frameToolIcon
             : embeddableToolSelected
             ? EmbedIcon
-            : laserToolSelected && !app.props.isCollaborating
-            ? laserPointerToolIcon
             : lassoToolSelected
             ? LassoIcon
             : extraToolsIcon}
@@ -1225,15 +1216,6 @@ export const ShapesSwitcher = ({
             selected={embeddableToolSelected}
           >
             {t("toolBar.embeddable")}
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            onSelect={() => app.setActiveTool({ type: "laser" })}
-            icon={laserPointerToolIcon}
-            data-testid="toolbar-laser"
-            selected={laserToolSelected}
-            shortcut={KEYS.K.toLocaleUpperCase()}
-          >
-            {t("toolBar.laser")}
           </DropdownMenu.Item>
           {isFullStylesPanel && (
             <DropdownMenu.Item

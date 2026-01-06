@@ -404,7 +404,6 @@ import {
   setCursorForShape,
 } from "../cursor";
 import { ElementCanvasButtons } from "../components/ElementCanvasButtons";
-import { LaserTrails } from "../laser-trails";
 import { withBatchedUpdates, withBatchedUpdatesThrottled } from "../reactUtils";
 import { textWysiwyg } from "../wysiwyg/textWysiwyg";
 import { isOverScrollBars } from "../scene/scrollbars";
@@ -427,7 +426,6 @@ import { activeConfirmDialogAtom } from "./ActiveConfirmDialog";
 import BraveMeasureTextError from "./BraveMeasureTextError";
 import { ContextMenu, CONTEXT_MENU_SEPARATOR } from "./ContextMenu";
 import { activeEyeDropperAtom } from "./EyeDropper";
-import FollowMode from "./FollowMode/FollowMode";
 import LayerUI from "./LayerUI";
 import { ElementCanvasButton } from "./MagicButton";
 import { SVGLayer } from "./SVGLayer";
@@ -474,9 +472,7 @@ import type {
   SidebarName,
   SidebarTabName,
   KeyboardModifiersObject,
-  CollaboratorPointer,
   ToolType,
-  OnUserFollowedPayload,
   UnsubscribeCallback,
   EmbedsValidationStatus,
   ElementsPendingErasure,
@@ -647,7 +643,6 @@ class App extends React.Component<AppProps, AppState> {
 
   animationFrameHandler = new AnimationFrameHandler();
 
-  laserTrails = new LaserTrails(this.animationFrameHandler, this);
   eraserTrail = new EraserTrail(this.animationFrameHandler, this);
   lassoTrail = new LassoTrail(this.animationFrameHandler, this);
 
@@ -674,7 +669,6 @@ class App extends React.Component<AppProps, AppState> {
       event: PointerEvent,
     ]
   >();
-  onUserFollowEmitter = new Emitter<[payload: OnUserFollowedPayload]>();
   onScrollChangeEmitter = new Emitter<
     [scrollX: number, scrollY: number, zoom: AppState["zoom"]]
   >();
@@ -767,7 +761,6 @@ class App extends React.Component<AppProps, AppState> {
         onPointerDown: (cb) => this.onPointerDownEmitter.on(cb),
         onPointerUp: (cb) => this.onPointerUpEmitter.on(cb),
         onScrollChange: (cb) => this.onScrollChangeEmitter.on(cb),
-        onUserFollow: (cb) => this.onUserFollowEmitter.on(cb),
       } as const;
       if (typeof excalidrawAPI === "function") {
         excalidrawAPI(api);
@@ -1890,10 +1883,7 @@ class App extends React.Component<AppProps, AppState> {
         : this.state.selectionElement ||
           this.state.newElement ||
           this.state.selectedElementsAreBeingDragged ||
-          this.state.resizingElement ||
-          (this.state.activeTool.type === "laser" &&
-            // technically we can just test on this once we make it more safe
-            this.state.cursorButton === "down");
+          this.state.resizingElement;
 
     const firstSelectedElement = selectedElements[0];
 
@@ -1967,7 +1957,6 @@ class App extends React.Component<AppProps, AppState> {
                             !this.scene.getElementsIncludingDeleted().length
                           }
                           app={this}
-                          isCollaborating={this.props.isCollaborating}
                           generateLinkForSelection={
                             this.props.generateLinkForSelection
                           }
@@ -1979,11 +1968,7 @@ class App extends React.Component<AppProps, AppState> {
                         <div className="excalidraw-contextMenuContainer" />
                         <div className="excalidraw-eye-dropper-container" />
                         <SVGLayer
-                          trails={[
-                            this.laserTrails,
-                            this.lassoTrail,
-                            this.eraserTrail,
-                          ]}
+                          trails={[this.lassoTrail, this.eraserTrail]}
                         />
                         {selectedElements.length === 1 &&
                           this.state.openDialog?.name !==
@@ -2173,14 +2158,6 @@ class App extends React.Component<AppProps, AppState> {
                           onPointerDown={this.handleCanvasPointerDown}
                           onDoubleClick={this.handleCanvasDoubleClick}
                         />
-                        {this.state.userToFollow && (
-                          <FollowMode
-                            width={this.state.width}
-                            height={this.state.height}
-                            userToFollow={this.state.userToFollow}
-                            onDisconnect={this.maybeUnfollowRemoteUser}
-                          />
-                        )}
                         {this.renderFrameNames()}
                         {this.state.activeLockedId && (
                           <UnlockPopup
@@ -2945,7 +2922,6 @@ class App extends React.Component<AppProps, AppState> {
     this.unmounted = true;
     this.removeEventListeners();
     this.library.destroy();
-    this.laserTrails.stop();
     this.eraserTrail.stop();
     this.onChangeEmitter.clear();
     this.store.onStoreIncrementEmitter.clear();
@@ -3123,14 +3099,6 @@ class App extends React.Component<AppProps, AppState> {
       this.setState({ showWelcomeScreen: true });
     }
 
-    const hasFollowedPersonLeft =
-      prevState.userToFollow &&
-      !this.state.collaborators.has(prevState.userToFollow.socketId);
-
-    if (hasFollowedPersonLeft) {
-      this.maybeUnfollowRemoteUser();
-    }
-
     if (
       prevState.zoom.value !== this.state.zoom.value ||
       prevState.scrollX !== this.state.scrollX ||
@@ -3146,22 +3114,6 @@ class App extends React.Component<AppProps, AppState> {
         this.state.scrollY,
         this.state.zoom,
       );
-    }
-
-    if (prevState.userToFollow !== this.state.userToFollow) {
-      if (prevState.userToFollow) {
-        this.onUserFollowEmitter.trigger({
-          userToFollow: prevState.userToFollow,
-          action: "UNFOLLOW",
-        });
-      }
-
-      if (this.state.userToFollow) {
-        this.onUserFollowEmitter.trigger({
-          userToFollow: this.state.userToFollow,
-          action: "FOLLOW",
-        });
-      }
     }
 
     if (
@@ -4166,18 +4118,11 @@ class App extends React.Component<AppProps, AppState> {
     }
   };
 
-  private maybeUnfollowRemoteUser = () => {
-    if (this.state.userToFollow) {
-      this.setState({ userToFollow: null });
-    }
-  };
-
   /** use when changing scrollX/scrollY/zoom based on user interaction */
   private translateCanvas: React.Component<any, AppState>["setState"] = (
     state,
   ) => {
     this.cancelInProgressAnimation?.();
-    this.maybeUnfollowRemoteUser();
     this.setState(state);
   };
 
@@ -4266,7 +4211,6 @@ class App extends React.Component<AppProps, AppState> {
     <K extends keyof AppState>(sceneData: {
       elements?: SceneData["elements"];
       appState?: Pick<AppState, K> | null;
-      collaborators?: SceneData["collaborators"];
       /**
        *  Controls which updates should be captured by the `Store`. Captured updates are emmitted and listened to by other components, such as `History` for undo / redo purposes.
        *
@@ -4280,7 +4224,7 @@ class App extends React.Component<AppProps, AppState> {
        */
       captureUpdate?: SceneData["captureUpdate"];
     }) => {
-      const { elements, appState, collaborators, captureUpdate } = sceneData;
+      const { elements, appState, captureUpdate } = sceneData;
 
       if (captureUpdate) {
         const nextElements = elements ? elements : undefined;
@@ -4306,9 +4250,6 @@ class App extends React.Component<AppProps, AppState> {
         this.scene.replaceAllElements(elements);
       }
 
-      if (collaborators) {
-        this.setState({ collaborators });
-      }
     },
   );
 
@@ -4949,15 +4890,6 @@ class App extends React.Component<AppProps, AppState> {
           event.preventDefault();
           this.setState({ openPopup: "fontFamily" });
         }
-      }
-
-      if (event.key === KEYS.K && !event.altKey && !event[KEYS.CTRL_OR_CMD]) {
-        if (this.state.activeTool.type === "laser") {
-          this.setActiveTool({ type: this.state.preferredSelectionTool.type });
-        } else {
-          this.setActiveTool({ type: "laser" });
-        }
-        return;
       }
 
       if (
@@ -6178,7 +6110,6 @@ class App extends React.Component<AppProps, AppState> {
   private handleCanvasPointerMove = (
     event: React.PointerEvent<HTMLCanvasElement>,
   ) => {
-    this.savePointer(event.clientX, event.clientY, this.state.cursorButton);
     this.lastPointerMoveEvent = event.nativeEvent;
     const scenePointer = viewportCoordsToSceneCoords(event, this.state);
     const { x: scenePointerX, y: scenePointerY } = scenePointer;
@@ -6925,7 +6856,6 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     this.maybeCleanupAfterMissingPointerUp(event.nativeEvent);
-    this.maybeUnfollowRemoteUser();
 
     if (this.state.searchMatches) {
       this.setState((state) => {
@@ -7042,8 +6972,7 @@ class App extends React.Component<AppProps, AppState> {
     this.lastPointerDownEvent = event;
 
     // we must exit before we set `cursorButton` state and `savePointer`
-    // else it will send pointer state & laser pointer events in collab when
-    // panning
+    // else it will send pointer state when panning
     if (this.handleCanvasPanUsingWheelOrSpaceDrag(event)) {
       return;
     }
@@ -7052,7 +6981,6 @@ class App extends React.Component<AppProps, AppState> {
       lastPointerDownWith: event.pointerType,
       cursorButton: "down",
     });
-    this.savePointer(event.clientX, event.clientY, "down");
 
     if (
       event.button === POINTER_BUTTON.ERASER &&
@@ -7288,11 +7216,6 @@ class App extends React.Component<AppProps, AppState> {
         pointerDownState,
         this.state.activeTool.type,
       );
-    } else if (this.state.activeTool.type === "laser") {
-      this.laserTrails.startPath(
-        pointerDownState.lastCoords.x,
-        pointerDownState.lastCoords.y,
-      );
     } else if (
       this.state.activeTool.type !== "eraser" &&
       this.state.activeTool.type !== "hand" &&
@@ -7331,7 +7254,7 @@ class App extends React.Component<AppProps, AppState> {
       onPointerUp(_event || event.nativeEvent),
     );
 
-    if (!this.state.viewModeEnabled || this.state.activeTool.type === "laser") {
+    if (!this.state.viewModeEnabled) {
       window.addEventListener(EVENT.POINTER_MOVE, onPointerMove);
       window.addEventListener(EVENT.POINTER_UP, onPointerUp);
       window.addEventListener(EVENT.KEYDOWN, onKeyDown);
@@ -7562,7 +7485,6 @@ class App extends React.Component<AppProps, AppState> {
         this.setState({
           cursorButton: "up",
         });
-        this.savePointer(event.clientX, event.clientY, "up");
         window.removeEventListener(EVENT.POINTER_MOVE, onPointerMove);
         window.removeEventListener(EVENT.POINTER_UP, teardown);
         window.removeEventListener(EVENT.BLUR, teardown);
@@ -7691,7 +7613,6 @@ class App extends React.Component<AppProps, AppState> {
       this.setState({
         cursorButton: "up",
       });
-      this.savePointer(event.clientX, event.clientY, "up");
       window.removeEventListener(EVENT.POINTER_MOVE, onPointerMove);
       window.removeEventListener(EVENT.POINTER_UP, onPointerUp);
       onPointerMove.flush();
@@ -8945,10 +8866,6 @@ class App extends React.Component<AppProps, AppState> {
         return;
       }
 
-      if (this.state.activeTool.type === "laser") {
-        this.laserTrails.addPointToPath(pointerCoords.x, pointerCoords.y);
-      }
-
       const [gridX, gridY] = getGridPoint(
         pointerCoords.x,
         pointerCoords.y,
@@ -9761,7 +9678,6 @@ class App extends React.Component<AppProps, AppState> {
       SnapCache.setReferenceSnapPoints(null);
       SnapCache.setVisibleGaps(null);
 
-      this.savePointer(childEvent.clientX, childEvent.clientY, "up");
 
       // if current elements are still selected
       // and the pointer is just over a locked element
@@ -10635,11 +10551,6 @@ class App extends React.Component<AppProps, AppState> {
           .filter(isArrowElement);
 
         bindOrUnbindBindingElements(linearElements, this.scene, this.state);
-      }
-
-      if (activeTool.type === "laser") {
-        this.laserTrails.endPath();
-        return;
       }
 
       if (
@@ -12001,24 +11912,6 @@ class App extends React.Component<AppProps, AppState> {
     }
   }
 
-  private savePointer = (x: number, y: number, button: "up" | "down") => {
-    if (!x || !y) {
-      return;
-    }
-    const { x: sceneX, y: sceneY } = viewportCoordsToSceneCoords(
-      { clientX: x, clientY: y },
-      this.state,
-    );
-
-    if (isNaN(sceneX) || isNaN(sceneY)) {
-      // sometimes the pointer goes off screen
-    }
-
-    const pointer: CollaboratorPointer = {
-      x: sceneX,
-      y: sceneY,
-      tool: this.state.activeTool.type === "laser" ? "laser" : "pointer",
-    };
 
     this.props.onPointerUpdate?.({
       pointer,

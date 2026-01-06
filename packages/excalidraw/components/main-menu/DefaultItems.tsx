@@ -41,7 +41,6 @@ import {
   searchIcon,
   SunIcon,
   TrashIcon,
-  usersIcon,
 } from "../icons";
 
 import "./DefaultItems.scss";
@@ -367,27 +366,3 @@ export const Socials = () => {
   );
 };
 Socials.displayName = "Socials";
-
-export const LiveCollaborationTrigger = ({
-  onSelect,
-  isCollaborating,
-}: {
-  onSelect: () => void;
-  isCollaborating: boolean;
-}) => {
-  const { t } = useI18n();
-  return (
-    <DropdownMenuItem
-      data-testid="collab-button"
-      icon={usersIcon}
-      className={clsx({
-        "active-collab": isCollaborating,
-      })}
-      onSelect={onSelect}
-    >
-      {t("labels.liveCollaboration")}
-    </DropdownMenuItem>
-  );
-};
-
-LiveCollaborationTrigger.displayName = "LiveCollaborationTrigger";

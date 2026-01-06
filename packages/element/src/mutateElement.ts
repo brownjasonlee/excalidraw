@@ -27,7 +27,7 @@ export type ElementUpdate<TElement extends ExcalidrawElement> = Omit<
 >;
 
 /**
- * This function tracks updates of text elements for the purposes for collaboration.
+ * This function tracks updates of text elements for runtime update handling.
  * The version is used to compare updates when more than one user is working in
  * the same drawing.
  *

@@ -143,7 +143,7 @@ export const duplicateElements = (
         } as const);
 
   // Ids of elements that have already been processed so we don't push them
-  // into the array twice if we end up backtracking when retrieving
+  // into the array twice if we end up stepping back when retrieving
   // discontiguous group of elements (can happen due to a bug, or in edge
   // cases such as a group containing deleted elements which were not selected).
   //

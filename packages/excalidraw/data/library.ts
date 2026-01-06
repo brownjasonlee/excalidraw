@@ -783,8 +783,7 @@ export const useHandleLibrary = (
       if (libraryUrlTokens) {
         event.stopImmediatePropagation();
         // If hash changed and it contains library url, import it and replace
-        // the url to its previous state (important in case of collaboration
-        // and similar).
+        // the url to its previous state (important in case of sharing links).
         // Using history API won't trigger another hashchange.
         window.history.replaceState({}, "", event.oldURL);
 

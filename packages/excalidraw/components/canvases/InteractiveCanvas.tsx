@@ -1,15 +1,9 @@
 import React, { useEffect, useRef } from "react";
 
-import {
-  CURSOR_TYPE,
-  isShallowEqual,
-  sceneCoordsToViewportCoords,
-  type EditorInterface,
-} from "@excalidraw/common";
+import { CURSOR_TYPE, isShallowEqual, type EditorInterface } from "@excalidraw/common";
 import { AnimationController } from "@excalidraw/excalidraw/renderer/animation";
 
 import type {
-  InteractiveCanvasRenderConfig,
   InteractiveSceneRenderAnimationState,
   InteractiveSceneRenderConfig,
   RenderableElementsMap,
@@ -91,48 +85,6 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
       return;
     }
 
-    const remotePointerButton: InteractiveCanvasRenderConfig["remotePointerButton"] =
-      new Map();
-    const remotePointerViewportCoords: InteractiveCanvasRenderConfig["remotePointerViewportCoords"] =
-      new Map();
-    const remoteSelectedElementIds: InteractiveCanvasRenderConfig["remoteSelectedElementIds"] =
-      new Map();
-    const remotePointerUsernames: InteractiveCanvasRenderConfig["remotePointerUsernames"] =
-      new Map();
-    const remotePointerUserStates: InteractiveCanvasRenderConfig["remotePointerUserStates"] =
-      new Map();
-
-    props.appState.collaborators.forEach((user, socketId) => {
-      if (user.selectedElementIds) {
-        for (const id of Object.keys(user.selectedElementIds)) {
-          if (!remoteSelectedElementIds.has(id)) {
-            remoteSelectedElementIds.set(id, []);
-          }
-          remoteSelectedElementIds.get(id)!.push(socketId);
-        }
-      }
-      if (!user.pointer || user.pointer.renderCursor === false) {
-        return;
-      }
-      if (user.username) {
-        remotePointerUsernames.set(socketId, user.username);
-      }
-      if (user.userState) {
-        remotePointerUserStates.set(socketId, user.userState);
-      }
-      remotePointerViewportCoords.set(
-        socketId,
-        sceneCoordsToViewportCoords(
-          {
-            sceneX: user.pointer.x,
-            sceneY: user.pointer.y,
-          },
-          props.appState,
-        ),
-      );
-      remotePointerButton.set(socketId, user.button);
-    });
-
     const selectionColor =
       (props.containerRef?.current &&
         getComputedStyle(props.containerRef.current).getPropertyValue(
@@ -150,11 +102,6 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
       scale: window.devicePixelRatio,
       appState: props.appState,
       renderConfig: {
-        remotePointerViewportCoords,
-        remotePointerButton,
-        remoteSelectedElementIds,
-        remotePointerUsernames,
-        remotePointerUserStates,
         selectionColor,
         renderScrollbars: props.renderScrollbars,
         // NOTE not memoized on so we don't rerender on cursor move
@@ -249,7 +196,6 @@ const getRelevantAppStateProps = (
   suggestedBinding: appState.suggestedBinding,
   isRotating: appState.isRotating,
   elementsToHighlight: appState.elementsToHighlight,
-  collaborators: appState.collaborators, // Necessary for collab. sessions
   activeEmbeddable: appState.activeEmbeddable,
   snapLines: appState.snapLines,
   zenModeEnabled: appState.zenModeEnabled,

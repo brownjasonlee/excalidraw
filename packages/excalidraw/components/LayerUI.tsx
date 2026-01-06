@@ -4,7 +4,6 @@ import React from "react";
 import {
   CLASSES,
   DEFAULT_SIDEBAR,
-  TOOL_TYPE,
   arrayToMap,
   capitalizeString,
   isShallowEqual,
@@ -38,7 +37,6 @@ import { MobileMenu } from "./MobileMenu";
 import { PasteChartDialog } from "./PasteChartDialog";
 import { Section } from "./Section";
 import Stack from "./Stack";
-import { UserList } from "./UserList";
 import { PenModeButton } from "./PenModeButton";
 import Footer from "./footer/Footer";
 import { isSidebarDockedAtom } from "./Sidebar/Sidebar";
@@ -60,7 +58,6 @@ import { HintViewer } from "./HintViewer";
 import { ImageExportDialog } from "./ImageExportDialog";
 import { Island } from "./Island";
 import { JSONExportDialog } from "./JSONExportDialog";
-import { LaserPointerButton } from "./LaserPointerButton";
 
 import "./LayerUI.scss";
 import "./Toolbar.scss";
@@ -97,7 +94,6 @@ interface LayerUIProps {
   renderWelcomeScreen: boolean;
   children?: React.ReactNode;
   app: AppClassProperties;
-  isCollaborating: boolean;
   generateLinkForSelection?: AppProps["generateLinkForSelection"];
 }
 
@@ -156,7 +152,6 @@ const LayerUI = ({
   renderWelcomeScreen,
   children,
   app,
-  isCollaborating,
   generateLinkForSelection,
 }: LayerUIProps) => {
   const editorInterface = useEditorInterface();
@@ -171,7 +166,6 @@ const LayerUI = ({
         toolbarRowGap: 1,
         toolbarInnerRowGap: 0.5,
         islandPadding: 1,
-        collabMarginLeft: 8,
       }
     : {
         menuTopGap: 6,
@@ -179,7 +173,6 @@ const LayerUI = ({
         toolbarRowGap: 1,
         toolbarInnerRowGap: 1,
         islandPadding: 1,
-        collabMarginLeft: 8,
       };
 
   const TunnelsJotaiProvider = tunnels.tunnelsJotai.Provider;
@@ -373,26 +366,6 @@ const LayerUI = ({
                             />
                           </Stack.Row>
                         </Island>
-                        {isCollaborating && (
-                          <Island
-                            style={{
-                              marginLeft: spacing.collabMarginLeft,
-                              alignSelf: "center",
-                              height: "fit-content",
-                            }}
-                          >
-                            <LaserPointerButton
-                              title={t("toolBar.laser")}
-                              checked={
-                                appState.activeTool.type === TOOL_TYPE.laser
-                              }
-                              onChange={() =>
-                                app.setActiveTool({ type: TOOL_TYPE.laser })
-                              }
-                              isMobile
-                            />
-                          </Island>
-                        )}
                       </Stack.Row>
                     </Stack.Col>
                   </div>
@@ -408,12 +381,6 @@ const LayerUI = ({
               },
             )}
           >
-            {appState.collaborators.size > 0 && (
-              <UserList
-                collaborators={appState.collaborators}
-                userToFollow={appState.userToFollow?.socketId || null}
-              />
-            )}
             {renderTopRightUI?.(
               editorInterface.formFactor === "phone",
               appState,
