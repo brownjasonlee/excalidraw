@@ -3,7 +3,6 @@ import clsx from "clsx";
 
 import { KEYS, capitalizeString } from "@excalidraw/common";
 
-import { trackEvent } from "../analytics";
 
 import { t } from "../i18n";
 
@@ -127,7 +126,6 @@ export const MobileToolBar = ({
 
   const handleToolChange = (toolType: string, pointerType?: string) => {
     if (app.state.activeTool.type !== toolType) {
-      trackEvent("toolbar", toolType, "ui");
     }
 
     if (toolType === "selection") {

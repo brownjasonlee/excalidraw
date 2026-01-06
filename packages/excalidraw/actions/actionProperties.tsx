@@ -80,7 +80,6 @@ import type { Scene } from "@excalidraw/element";
 
 import type { CaptureUpdateActionType } from "@excalidraw/element";
 
-import { trackEvent } from "../analytics";
 import { RadioSelection } from "../components/RadioSelection";
 import { ColorPicker } from "../components/ColorPicker/ColorPicker";
 import { FontPicker } from "../components/FontPicker/FontPicker";
@@ -314,7 +313,6 @@ export const actionChangeStrokeColor = register<
 >({
   name: "changeStrokeColor",
   label: "labels.stroke",
-  trackEvent: false,
   perform: (elements, appState, value) => {
     return {
       ...(value?.currentItemStrokeColor && {
@@ -376,7 +374,6 @@ export const actionChangeBackgroundColor = register<
 >({
   name: "changeBackgroundColor",
   label: "labels.changeBackground",
-  trackEvent: false,
   perform: (elements, appState, value, app) => {
     if (!value?.currentItemBackgroundColor) {
       return {
@@ -461,15 +458,7 @@ export const actionChangeBackgroundColor = register<
 export const actionChangeFillStyle = register<ExcalidrawElement["fillStyle"]>({
   name: "changeFillStyle",
   label: "labels.fill",
-  trackEvent: false,
   perform: (elements, appState, value, app) => {
-    trackEvent(
-      "element",
-      "changeFillStyle",
-      `${value} (${
-        app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
-      })`,
-    );
     return {
       elements: changeProperty(elements, appState, (el) =>
         newElementWith(el, {
@@ -545,7 +534,6 @@ export const actionChangeStrokeWidth = register<
 >({
   name: "changeStrokeWidth",
   label: "labels.strokeWidth",
-  trackEvent: false,
   perform: (elements, appState, value) => {
     return {
       elements: changeProperty(elements, appState, (el) =>
@@ -601,7 +589,6 @@ export const actionChangeStrokeWidth = register<
 export const actionChangeSloppiness = register<ExcalidrawElement["roughness"]>({
   name: "changeSloppiness",
   label: "labels.sloppiness",
-  trackEvent: false,
   perform: (elements, appState, value) => {
     return {
       elements: changeProperty(elements, appState, (el) =>
@@ -657,7 +644,6 @@ export const actionChangeStrokeStyle = register<
 >({
   name: "changeStrokeStyle",
   label: "labels.strokeStyle",
-  trackEvent: false,
   perform: (elements, appState, value) => {
     return {
       elements: changeProperty(elements, appState, (el) =>
@@ -710,7 +696,6 @@ export const actionChangeStrokeStyle = register<
 export const actionChangeOpacity = register<ExcalidrawElement["opacity"]>({
   name: "changeOpacity",
   label: "labels.opacity",
-  trackEvent: false,
   perform: (elements, appState, value) => {
     return {
       elements: changeProperty(
@@ -735,7 +720,6 @@ export const actionChangeFontSize = register<ExcalidrawTextElement["fontSize"]>(
   {
     name: "changeFontSize",
     label: "labels.fontSize",
-    trackEvent: false,
     perform: (elements, appState, value, app) => {
       return changeFontSize(
         elements,
@@ -830,7 +814,6 @@ export const actionDecreaseFontSize = register({
   name: "decreaseFontSize",
   label: "labels.decreaseFontSize",
   icon: fontSizeIcon,
-  trackEvent: false,
   perform: (elements, appState, value, app) => {
     return changeFontSize(elements, appState, app, (element) =>
       Math.round(
@@ -854,7 +837,6 @@ export const actionIncreaseFontSize = register({
   name: "increaseFontSize",
   label: "labels.increaseFontSize",
   icon: fontSizeIcon,
-  trackEvent: false,
   perform: (elements, appState, value, app) => {
     return changeFontSize(elements, appState, app, (element) =>
       Math.round(element.fontSize * (1 + FONT_SIZE_RELATIVE_INCREASE_STEP)),
@@ -890,7 +872,6 @@ export const actionChangeFontFamily = register<{
 }>({
   name: "changeFontFamily",
   label: "labels.fontFamily",
-  trackEvent: false,
   perform: (elements, appState, value, app) => {
     const { cachedElements, resetAll, resetContainers, ...nextAppState } =
       value as ChangeFontFamilyData;
@@ -1271,7 +1252,6 @@ export const actionChangeFontFamily = register<{
 export const actionChangeTextAlign = register<TextAlign>({
   name: "changeTextAlign",
   label: "Change text alignment",
-  trackEvent: false,
   perform: (elements, appState, value, app) => {
     return {
       elements: changeProperty(
@@ -1372,7 +1352,6 @@ export const actionChangeTextAlign = register<TextAlign>({
 export const actionChangeVerticalAlign = register<VerticalAlign>({
   name: "changeVerticalAlign",
   label: "Change vertical alignment",
-  trackEvent: { category: "element" },
   perform: (elements, appState, value, app) => {
     return {
       elements: changeProperty(
@@ -1472,7 +1451,6 @@ export const actionChangeVerticalAlign = register<VerticalAlign>({
 export const actionChangeRoundness = register<"sharp" | "round">({
   name: "changeRoundness",
   label: "Change edge roundness",
-  trackEvent: false,
   perform: (elements, appState, value) => {
     return {
       elements: changeProperty(elements, appState, (el) => {
@@ -1632,7 +1610,6 @@ export const actionChangeArrowhead = register<{
 }>({
   name: "changeArrowhead",
   label: "Change arrowheads",
-  trackEvent: false,
   perform: (elements, appState, value) => {
     invariant(value, "actionChangeArrowhead: value must be defined");
 
@@ -1714,7 +1691,6 @@ export const actionChangeArrowhead = register<{
 export const actionChangeArrowProperties = register({
   name: "changeArrowProperties",
   label: "Change arrow properties",
-  trackEvent: false,
   perform: (elements, appState, value, app) => {
     // This action doesn't perform any changes directly
     // It's just a container for the arrow type and arrowhead actions
@@ -1733,7 +1709,6 @@ export const actionChangeArrowProperties = register({
 export const actionChangeArrowType = register<keyof typeof ARROW_TYPE>({
   name: "changeArrowType",
   label: "Change arrow types",
-  trackEvent: false,
   perform: (elements, appState, value, app) => {
     const newElements = changeProperty(elements, appState, (el) => {
       if (!isArrowElement(el)) {

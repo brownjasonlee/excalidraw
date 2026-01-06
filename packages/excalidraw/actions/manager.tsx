@@ -7,8 +7,6 @@ import type {
   OrderedExcalidrawElement,
 } from "@excalidraw/element/types";
 
-import { trackEvent } from "../analytics";
-
 import type { AppClassProperties, AppState } from "../types";
 import type {
   Action,
@@ -18,36 +16,6 @@ import type {
   PanelComponentProps,
   ActionSource,
 } from "./types";
-
-const trackAction = (
-  action: Action,
-  source: ActionSource,
-  appState: Readonly<AppState>,
-  elements: readonly ExcalidrawElement[],
-  app: AppClassProperties,
-  value: any,
-) => {
-  if (action.trackEvent) {
-    try {
-      if (typeof action.trackEvent === "object") {
-        const shouldTrack = action.trackEvent.predicate
-          ? action.trackEvent.predicate(appState, elements, value)
-          : true;
-        if (shouldTrack) {
-          trackEvent(
-            action.trackEvent.category,
-            action.trackEvent.action || action.name,
-            `${source} (${
-              app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
-            })`,
-          );
-        }
-      }
-    } catch (error) {
-      console.error("error while logging action:", error);
-    }
-  }
-};
 
 export class ActionManager {
   actions = {} as Record<ActionName, Action>;
@@ -121,8 +89,6 @@ export class ActionManager {
     const appState = this.getAppState();
     const value = null;
 
-    trackAction(action, "keyboard", appState, elements, this.app, null);
-
     event.preventDefault();
     event.stopPropagation();
     this.updater(data[0].perform(elements, appState, value, this.app));
@@ -136,8 +102,6 @@ export class ActionManager {
   ) {
     const elements = this.getElementsIncludingDeleted();
     const appState = this.getAppState();
-
-    trackAction(action, source, appState, elements, this.app, value);
 
     this.updater(action.perform(elements, appState, value, this.app));
   }
@@ -161,8 +125,6 @@ export class ActionManager {
       const elements = this.getElementsIncludingDeleted();
       const appState = this.getAppState();
       const updateData = (formState?: any) => {
-        trackAction(action, "ui", appState, elements, this.app, formState);
-
         this.updater(
           action.perform(
             this.getElementsIncludingDeleted(),

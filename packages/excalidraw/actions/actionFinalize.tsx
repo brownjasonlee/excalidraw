@@ -52,7 +52,6 @@ type FormData = {
 export const actionFinalize = register<FormData>({
   name: "finalize",
   label: "",
-  trackEvent: false,
   perform: (elements, appState, data, app) => {
     let newElements = elements;
     const { interactiveCanvas, focusContainer, scene } = app;

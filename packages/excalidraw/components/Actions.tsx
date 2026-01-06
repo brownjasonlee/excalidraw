@@ -32,7 +32,6 @@ import type {
 import { actionToggleZenMode } from "../actions";
 
 import { alignActionsPredicate } from "../actions/actionAlign";
-import { trackEvent } from "../analytics";
 import { useTunnels } from "../context/tunnels";
 
 import { t } from "../i18n";
@@ -1162,7 +1161,6 @@ export const ShapesSwitcher = ({
               }}
               onChange={({ pointerType }) => {
                 if (app.state.activeTool.type !== value) {
-                  trackEvent("toolbar", value, "ui");
                 }
                 if (value === "image") {
                   app.setActiveTool({

@@ -6,7 +6,6 @@ import type { NonDeletedExcalidrawElement } from "@excalidraw/element/types";
 
 import { actionSaveFileToDisk } from "../actions/actionExport";
 
-import { trackEvent } from "../analytics";
 import { nativeFileSystemSupported } from "../data/filesystem";
 import { t } from "../i18n";
 
@@ -83,7 +82,6 @@ const JSONExportModal = ({
               showAriaLabel={true}
               onClick={async () => {
                 try {
-                  trackEvent("export", "link", `ui (${getFrame()})`);
                   await onExportToBackend(elements, appState, files);
                   onCloseRequest();
                 } catch (error: any) {

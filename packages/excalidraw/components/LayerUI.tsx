@@ -19,7 +19,6 @@ import { ShapeCache } from "@excalidraw/element";
 import type { NonDeletedExcalidrawElement } from "@excalidraw/element/types";
 
 import { actionToggleStats } from "../actions";
-import { trackEvent } from "../analytics";
 import { isHandToolActive } from "../appState";
 import { TunnelsContext, useInitializeTunnels } from "../context/tunnels";
 import { UIAppStateContext } from "../context/ui-appState";
@@ -446,13 +445,6 @@ const LayerUI = ({
       <DefaultSidebar
         __fallback
         onDock={(docked) => {
-          trackEvent(
-            "sidebar",
-            `toggleDock (${docked ? "dock" : "undock"})`,
-            `(${
-              editorInterface.formFactor === "phone" ? "mobile" : "desktop"
-            })`,
-          );
         }}
       />
     );
@@ -476,13 +468,6 @@ const LayerUI = ({
         title={capitalizeString(t("toolBar.library"))}
         onToggle={(open) => {
           if (open) {
-            trackEvent(
-              "sidebar",
-              `${DEFAULT_SIDEBAR.name} (open)`,
-              `button (${
-                editorInterface.formFactor === "phone" ? "mobile" : "desktop"
-              })`,
-            );
           }
         }}
         tab={DEFAULT_SIDEBAR.defaultTab}

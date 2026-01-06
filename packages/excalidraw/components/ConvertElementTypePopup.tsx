@@ -77,7 +77,6 @@ import {
   ROUNDNESS,
   sceneCoordsToViewportCoords,
 } from "..";
-import { trackEvent } from "../analytics";
 import { atom } from "../editor-jotai";
 
 import "./ConvertElementTypePopup.scss";
@@ -345,7 +344,6 @@ const Panel = ({
             data-testid={`toolbar-${type}`}
             onChange={() => {
               if (app.state.activeTool.type !== type) {
-                trackEvent("convertElementType", type, "ui");
               }
               convertElementTypes(app, {
                 conversionType,

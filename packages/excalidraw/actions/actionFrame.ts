@@ -40,7 +40,6 @@ const isSingleFrameSelected = (
 export const actionSelectAllElementsInFrame = register({
   name: "selectAllElementsInFrame",
   label: "labels.selectAllElementsInFrame",
-  trackEvent: { category: "canvas" },
   perform: (elements, appState, _, app) => {
     const selectedElement =
       app.scene.getSelectedElements(appState).at(0) || null;
@@ -77,7 +76,6 @@ export const actionSelectAllElementsInFrame = register({
 export const actionRemoveAllElementsFromFrame = register({
   name: "removeAllElementsFromFrame",
   label: "labels.removeAllElementsFromFrame",
-  trackEvent: { category: "history" },
   perform: (elements, appState, _, app) => {
     const selectedElement =
       app.scene.getSelectedElements(appState).at(0) || null;
@@ -109,7 +107,6 @@ export const actionupdateFrameRendering = register({
   name: "updateFrameRendering",
   label: "labels.updateFrameRendering",
   viewMode: true,
-  trackEvent: { category: "canvas" },
   perform: (elements, appState) => {
     return {
       elements,
@@ -129,7 +126,6 @@ export const actionupdateFrameRendering = register({
 export const actionSetFrameAsActiveTool = register({
   name: "setFrameAsActiveTool",
   label: "toolBar.frame",
-  trackEvent: { category: "toolbar" },
   icon: frameToolIcon,
   viewMode: false,
   perform: (elements, appState, _, app) => {
@@ -163,7 +159,6 @@ export const actionSetFrameAsActiveTool = register({
 export const actionWrapSelectionInFrame = register({
   name: "wrapSelectionInFrame",
   label: "labels.wrapSelectionInFrame",
-  trackEvent: { category: "element" },
   predicate: (elements, appState, _, app) => {
     const selectedElements = getSelectedElements(elements, appState);
 

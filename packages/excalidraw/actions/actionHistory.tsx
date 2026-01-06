@@ -67,7 +67,6 @@ export const createUndoAction: ActionCreator = (history) => ({
   name: "undo",
   label: "buttons.undo",
   icon: UndoIcon,
-  trackEvent: { category: "history" },
   viewMode: false,
   perform: (elements, appState, value, app) =>
     executeHistoryAction(app, appState, () =>
@@ -106,7 +105,6 @@ export const createRedoAction: ActionCreator = (history) => ({
   name: "redo",
   label: "buttons.redo",
   icon: RedoIcon,
-  trackEvent: { category: "history" },
   viewMode: false,
   perform: (elements, appState, __, app) =>
     executeHistoryAction(app, appState, () =>
