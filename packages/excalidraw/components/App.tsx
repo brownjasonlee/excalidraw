@@ -1948,14 +1948,6 @@ class App extends React.Component<AppProps, AppState> {
                           }
                           UIOptions={this.props.UIOptions}
                           onExportImage={this.onExportImage}
-                          renderWelcomeScreen={
-                            !this.state.isLoading &&
-                            this.state.showWelcomeScreen &&
-                            this.state.activeTool.type ===
-                              this.state.preferredSelectionTool.type &&
-                            !this.state.zenModeEnabled &&
-                            !this.scene.getElementsIncludingDeleted().length
-                          }
                           app={this}
                           generateLinkForSelection={
                             this.props.generateLinkForSelection
@@ -3094,10 +3086,6 @@ class App extends React.Component<AppProps, AppState> {
     this.updateEmbeddables();
     const elements = this.scene.getElementsIncludingDeleted();
     const elementsMap = this.scene.getElementsMapIncludingDeleted();
-
-    if (!this.state.showWelcomeScreen && !elements.length) {
-      this.setState({ showWelcomeScreen: true });
-    }
 
     if (
       prevState.zoom.value !== this.state.zoom.value ||
@@ -4579,21 +4567,6 @@ class App extends React.Component<AppProps, AppState> {
         }
       }
 
-      if (
-        event[KEYS.CTRL_OR_CMD] &&
-        event.key === KEYS.P &&
-        !event.shiftKey &&
-        !event.altKey
-      ) {
-        this.setToast({
-          message: t("commandPalette.shortcutHint", {
-            shortcut: getShortcutFromShortcutName("commandPalette"),
-          }),
-        });
-        event.preventDefault();
-        return;
-      }
-
       if (event[KEYS.CTRL_OR_CMD] && event.key.toLowerCase() === KEYS.V) {
         IS_PLAIN_PASTE = event.shiftKey;
         clearTimeout(IS_PLAIN_PASTE_TIMER);
@@ -4625,12 +4598,7 @@ class App extends React.Component<AppProps, AppState> {
         return;
       }
 
-      if (event.key === KEYS.QUESTION_MARK) {
-        this.setState({
-          openDialog: { name: "help" },
-        });
-        return;
-      } else if (
+      if (
         event.key.toLowerCase() === KEYS.E &&
         event.shiftKey &&
         event[KEYS.CTRL_OR_CMD]

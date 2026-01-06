@@ -8,7 +8,6 @@ import {
   actionClearCanvas,
   actionLoadScene,
   actionSaveToActiveFile,
-  actionShortcuts,
   actionToggleSearchMenu,
   actionToggleTheme,
 } from "../../actions";
@@ -30,11 +29,9 @@ import DropdownMenuItemContentRadio from "../dropdownMenu/DropdownMenuItemConten
 import DropdownMenuItemLink from "../dropdownMenu/DropdownMenuItemLink";
 import { GithubIcon, DiscordIcon, XBrandIcon } from "../icons";
 import {
-  boltIcon,
   DeviceDesktopIcon,
   ExportIcon,
   ExportImageIcon,
-  HelpIcon,
   LoadIcon,
   MoonIcon,
   save,
@@ -125,27 +122,6 @@ export const SaveAsImage = () => {
 };
 SaveAsImage.displayName = "SaveAsImage";
 
-export const CommandPalette = (opts?: { className?: string }) => {
-  const setAppState = useExcalidrawSetAppState();
-  const { t } = useI18n();
-
-  return (
-    <DropdownMenuItem
-      icon={boltIcon}
-      data-testid="command-palette-button"
-      onSelect={() => {
-        setAppState({ openDialog: { name: "commandPalette" } });
-      }}
-      shortcut={getShortcutFromShortcutName("commandPalette")}
-      aria-label={t("commandPalette.title")}
-      className={opts?.className}
-    >
-      {t("commandPalette.title")}
-    </DropdownMenuItem>
-  );
-};
-CommandPalette.displayName = "CommandPalette";
-
 export const SearchMenu = (opts?: { className?: string }) => {
   const { t } = useI18n();
   const actionManager = useExcalidrawActionManager();
@@ -166,25 +142,6 @@ export const SearchMenu = (opts?: { className?: string }) => {
   );
 };
 SearchMenu.displayName = "SearchMenu";
-
-export const Help = () => {
-  const { t } = useI18n();
-
-  const actionManager = useExcalidrawActionManager();
-
-  return (
-    <DropdownMenuItem
-      data-testid="help-menu-item"
-      icon={HelpIcon}
-      onSelect={() => actionManager.executeAction(actionShortcuts)}
-      shortcut="?"
-      aria-label={t("helpDialog.title")}
-    >
-      {t("helpDialog.title")}
-    </DropdownMenuItem>
-  );
-};
-Help.displayName = "Help";
 
 export const ClearCanvas = () => {
   const { t } = useI18n();

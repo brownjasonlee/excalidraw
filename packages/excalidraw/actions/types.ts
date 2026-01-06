@@ -18,8 +18,7 @@ export type ActionSource =
   | "ui"
   | "keyboard"
   | "contextMenu"
-  | "api"
-  | "commandPalette";
+  | "api";
 
 /** if false, the action should be prevented */
 export type ActionResult =
@@ -96,7 +95,6 @@ export type ActionName =
   | "changeTextAlign"
   | "changeVerticalAlign"
   | "toggleFullScreen"
-  | "toggleShortcuts"
   | "group"
   | "ungroup"
   | "addToLibrary"
@@ -131,7 +129,6 @@ export type ActionName =
   | "setEmbeddableAsActiveTool"
   | "createContainerFromText"
   | "wrapTextInContainer"
-  | "commandPalette"
   | "autoResize"
   | "elementStats"
   | "searchMenu"

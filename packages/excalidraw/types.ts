@@ -219,7 +219,6 @@ export interface AppState {
     top: number;
     left: number;
   } | null;
-  showWelcomeScreen: boolean;
   isLoading: boolean;
   errorMessage: React.ReactNode;
   activeEmbeddable: {
@@ -320,9 +319,8 @@ export interface AppState {
   openSidebar: { name: SidebarName; tab?: SidebarTabName } | null;
   openDialog:
     | null
-    | { name: "imageExport" | "help" | "jsonExport" }
+    | { name: "imageExport" | "jsonExport" }
     | { name: "ttd"; tab: "text-to-diagram" | "mermaid" }
-    | { name: "commandPalette" }
     | { name: "settings" }
     | { name: "elementLinkSelector"; sourceElementId: ExcalidrawElement["id"] };
   /**

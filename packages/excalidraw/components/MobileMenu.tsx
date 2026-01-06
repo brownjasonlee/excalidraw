@@ -18,7 +18,6 @@ import { PenModeButton } from "./PenModeButton";
 import type { ActionManager } from "../actions/manager";
 import type {
   AppClassProperties,
-  AppProps,
   AppState,
   UIAppState,
 } from "../types";
@@ -43,8 +42,6 @@ type MobileMenuProps = {
     appState: UIAppState,
   ) => JSX.Element | null;
   renderSidebars: () => JSX.Element | null;
-  renderWelcomeScreen: boolean;
-  UIOptions: AppProps["UIOptions"];
   app: AppClassProperties;
 };
 
@@ -57,16 +54,10 @@ export const MobileMenu = ({
   renderTopLeftUI,
   renderTopRightUI,
   renderSidebars,
-  renderWelcomeScreen,
-  UIOptions,
   app,
   onPenModeToggle,
 }: MobileMenuProps) => {
-  const {
-    WelcomeScreenCenterTunnel,
-    MainMenuTunnel,
-    DefaultSidebarTriggerTunnel,
-  } = useTunnels();
+  const { MainMenuTunnel, DefaultSidebarTriggerTunnel } = useTunnels();
   const renderAppTopBar = () => {
     if (appState.openDialog?.name === "elementLinkSelector") {
       return null;
@@ -128,12 +119,6 @@ export const MobileMenu = ({
   return (
     <>
       {renderSidebars()}
-      {/* welcome screen, bottom bar, and top bar all have the same z-index */}
-      {/* ordered in this reverse order so that top bar is on top */}
-      <div className="App-welcome-screen">
-        {renderWelcomeScreen && <WelcomeScreenCenterTunnel.Out />}
-      </div>
-
       {!appState.viewModeEnabled && (
         <div
           className="App-bottom-bar"

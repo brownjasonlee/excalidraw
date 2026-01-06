@@ -53,7 +53,6 @@ import { ErrorDialog } from "./ErrorDialog";
 import { EyeDropper, activeEyeDropperAtom } from "./EyeDropper";
 import { FixedSideContainer } from "./FixedSideContainer";
 import { HandButton } from "./HandButton";
-import { HelpDialog } from "./HelpDialog";
 import { HintViewer } from "./HintViewer";
 import { ImageExportDialog } from "./ImageExportDialog";
 import { Island } from "./Island";
@@ -91,7 +90,6 @@ interface LayerUIProps {
   renderCustomStats?: ExcalidrawProps["renderCustomStats"];
   UIOptions: AppProps["UIOptions"];
   onExportImage: AppClassProperties["onExportImage"];
-  renderWelcomeScreen: boolean;
   children?: React.ReactNode;
   app: AppClassProperties;
   generateLinkForSelection?: AppProps["generateLinkForSelection"];
@@ -111,7 +109,6 @@ const DefaultMainMenu: React.FC<{
         <MainMenu.DefaultItems.SaveAsImage />
       )}
       <MainMenu.DefaultItems.SearchMenu />
-      <MainMenu.DefaultItems.Help />
       <MainMenu.DefaultItems.ClearCanvas />
       <MainMenu.Separator />
       <MainMenu.Group title="Excalidraw links">
@@ -149,7 +146,6 @@ const LayerUI = ({
   renderCustomStats,
   UIOptions,
   onExportImage,
-  renderWelcomeScreen,
   children,
   app,
   generateLinkForSelection,
@@ -223,7 +219,6 @@ const LayerUI = ({
       {/* wrapping to Fragment stops React from occasionally complaining
                 about identical Keys */}
       <tunnels.MainMenuTunnel.Out />
-      {renderWelcomeScreen && <tunnels.WelcomeScreenMenuHintTunnel.Out />}
     </div>
   );
 
@@ -311,9 +306,6 @@ const LayerUI = ({
               <Section heading="shapes" className="shapes-section">
                 {(heading: React.ReactNode) => (
                   <div style={{ position: "relative" }}>
-                    {renderWelcomeScreen && (
-                      <tunnels.WelcomeScreenToolbarHintTunnel.Out />
-                    )}
                     <Stack.Col gap={spacing.toolbarColGap} align="start">
                       <Stack.Row
                         gap={spacing.toolbarRowGap}
@@ -493,13 +485,6 @@ const LayerUI = ({
           }}
         />
       )}
-      {appState.openDialog?.name === "help" && (
-        <HelpDialog
-          onClose={() => {
-            setAppState({ openDialog: null });
-          }}
-        />
-      )}
       <ActiveConfirmDialog />
       {appState.openDialog?.name === "elementLinkSelector" && (
         <ElementLinkDialog
@@ -542,8 +527,6 @@ const LayerUI = ({
           renderTopLeftUI={renderTopLeftUI}
           renderTopRightUI={renderTopRightUI}
           renderSidebars={renderSidebars}
-          renderWelcomeScreen={renderWelcomeScreen}
-          UIOptions={UIOptions}
         />
       )}
       {editorInterface.formFactor !== "phone" && (
@@ -558,13 +541,11 @@ const LayerUI = ({
                 : {}
             }
           >
-            {renderWelcomeScreen && <tunnels.WelcomeScreenCenterTunnel.Out />}
             {renderFixedSideContainer()}
             <Footer
               appState={appState}
               actionManager={actionManager}
               showExitZenModeBtn={showExitZenModeBtn}
-              renderWelcomeScreen={renderWelcomeScreen}
             />
             {appState.scrolledOutside && (
               <button

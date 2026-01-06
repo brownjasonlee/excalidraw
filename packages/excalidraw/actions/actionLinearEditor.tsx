@@ -15,7 +15,6 @@ import type {
   ExcalidrawLineElement,
 } from "@excalidraw/element/types";
 
-import { DEFAULT_CATEGORIES } from "../components/CommandPalette/CommandPalette";
 import { ToolButton } from "../components/ToolButton";
 import { lineEditorIcon, polygonIcon } from "../components/icons";
 import { t } from "../i18n";
@@ -28,7 +27,7 @@ import { register } from "./register";
 
 export const actionToggleLinearEditor = register({
   name: "toggleLinearEditor",
-  category: DEFAULT_CATEGORIES.elements,
+  category: "elements",
   label: (elements, appState, app) => {
     const selectedElement = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
@@ -108,7 +107,7 @@ export const actionToggleLinearEditor = register({
 
 export const actionTogglePolygon = register({
   name: "togglePolygon",
-  category: DEFAULT_CATEGORIES.elements,
+  category: "elements",
   icon: polygonIcon,
   keywords: ["loop"],
   label: (elements, appState, app) => {
