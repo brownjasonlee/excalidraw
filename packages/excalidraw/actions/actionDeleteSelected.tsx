@@ -11,6 +11,7 @@ import { newElementWith } from "@excalidraw/element";
 import { getContainerElement } from "@excalidraw/element";
 import {
   isBoundToContainer,
+  isArrowElement,
   isElbowArrow,
   isFrameLikeElement,
 } from "@excalidraw/element";
@@ -53,6 +54,25 @@ const deleteSelectedElements = (
   const elementsMap = app.scene.getNonDeletedElementsMap();
 
   const processedElements = new Set<ExcalidrawElement["id"]>();
+  const orgChartRelationshipIds = new Set<ExcalidrawElement["id"]>();
+
+  if (appState.orgChartModeEnabled) {
+    elements.forEach((element) => {
+      if (!appState.selectedElementIds[element.id] || !element.boundElements) {
+        return;
+      }
+      element.boundElements.forEach((candidate) => {
+        const bound = elementsMap.get(candidate.id);
+        if (
+          bound &&
+          isArrowElement(bound) &&
+          bound.customData?.orgChart?.type === "relationship"
+        ) {
+          orgChartRelationshipIds.add(bound.id);
+        }
+      });
+    });
+  }
 
   for (const frameId of framesToBeDeleted) {
     const frameChildren = getFrameChildren(elements, frameId);
@@ -76,6 +96,10 @@ const deleteSelectedElements = (
   let shouldSelectEditingGroup = true;
 
   const nextElements = elements.map((el) => {
+    if (orgChartRelationshipIds.has(el.id)) {
+      return newElementWith(el, { isDeleted: true });
+    }
+
     if (appState.selectedElementIds[el.id]) {
       const boundElement = isBoundToContainer(el)
         ? getContainerElement(el, elementsMap)

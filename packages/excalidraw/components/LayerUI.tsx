@@ -111,6 +111,10 @@ const DefaultMainMenu: React.FC<{
       <MainMenu.DefaultItems.SearchMenu />
       <MainMenu.DefaultItems.ToggleGridMode />
       <MainMenu.DefaultItems.ToggleObjectsSnapMode />
+      <MainMenu.Separator />
+      <MainMenu.DefaultItems.ToggleOrgChartMode />
+      <MainMenu.DefaultItems.ImportOrgChart />
+      <MainMenu.DefaultItems.ExportOrgChart />
       <MainMenu.DefaultItems.ClearCanvas />
       <MainMenu.Separator />
       <MainMenu.Group title="Excalidraw links">

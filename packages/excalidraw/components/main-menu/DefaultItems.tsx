@@ -6,9 +6,12 @@ import type { Theme } from "@excalidraw/element/types";
 
 import {
   actionClearCanvas,
+  actionExportOrgChart,
+  actionImportOrgChart,
   actionLoadScene,
   actionSaveToActiveFile,
   actionToggleGridMode,
+  actionToggleOrgChartMode,
   actionToggleObjectsSnapMode,
   actionToggleSearchMenu,
   actionToggleTheme,
@@ -193,6 +196,75 @@ export const ToggleObjectsSnapMode = () => {
   );
 };
 ToggleObjectsSnapMode.displayName = "ToggleObjectsSnapMode";
+
+export const ToggleOrgChartMode = () => {
+  const { t } = useI18n();
+  const actionManager = useExcalidrawActionManager();
+
+  if (!actionManager.isActionEnabled(actionToggleOrgChartMode)) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuItem
+      icon={gridIcon}
+      data-testid="org-chart-mode-button"
+      onSelect={() => {
+        actionManager.executeAction(actionToggleOrgChartMode);
+      }}
+      aria-label={t("labels.orgChartMode")}
+    >
+      {t("labels.orgChartMode")}
+    </DropdownMenuItem>
+  );
+};
+ToggleOrgChartMode.displayName = "ToggleOrgChartMode";
+
+export const ImportOrgChart = () => {
+  const { t } = useI18n();
+  const actionManager = useExcalidrawActionManager();
+
+  if (!actionManager.isActionEnabled(actionImportOrgChart)) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuItem
+      icon={LoadIcon}
+      data-testid="org-chart-import-button"
+      onSelect={() => {
+        actionManager.executeAction(actionImportOrgChart);
+      }}
+      aria-label={t("labels.importOrgChart")}
+    >
+      {t("labels.importOrgChart")}
+    </DropdownMenuItem>
+  );
+};
+ImportOrgChart.displayName = "ImportOrgChart";
+
+export const ExportOrgChart = () => {
+  const { t } = useI18n();
+  const actionManager = useExcalidrawActionManager();
+
+  if (!actionManager.isActionEnabled(actionExportOrgChart)) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuItem
+      icon={ExportIcon}
+      data-testid="org-chart-export-button"
+      onSelect={() => {
+        actionManager.executeAction(actionExportOrgChart);
+      }}
+      aria-label={t("labels.exportOrgChart")}
+    >
+      {t("labels.exportOrgChart")}
+    </DropdownMenuItem>
+  );
+};
+ExportOrgChart.displayName = "ExportOrgChart";
 
 export const ClearCanvas = () => {
   const { t } = useI18n();

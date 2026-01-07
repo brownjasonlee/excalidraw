@@ -9,6 +9,10 @@ export { actionSelectAll } from "./actionSelectAll";
 export { actionDuplicateSelection } from "./actionDuplicateSelection";
 export { actionAddChild } from "./actionAddChild";
 export { actionArrangeOrgChart } from "./actionArrangeOrgChart";
+export { actionExportOrgChart } from "./actionExportOrgChart";
+export { actionImportOrgChart } from "./actionImportOrgChart";
+export { actionToggleOrgChartMode } from "./actionToggleOrgChartMode";
+export { actionOrgChartLabel } from "./actionOrgChartLabel";
 export {
   actionChangeStrokeColor,
   actionChangeBackgroundColor,

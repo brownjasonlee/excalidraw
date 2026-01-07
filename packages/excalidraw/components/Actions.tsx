@@ -30,7 +30,7 @@ import type {
   NonDeletedSceneElementsMap,
 } from "@excalidraw/element/types";
 
-import { actionToggleZenMode } from "../actions";
+import { actionOrgChartLabel, actionToggleZenMode } from "../actions";
 
 import { alignActionsPredicate } from "../actions/actionAlign";
 import { useTunnels } from "../context/tunnels";
@@ -313,6 +313,7 @@ export const SelectedShapeActions = ({
             {showLinkIcon && renderAction("hyperlink")}
             {showAddChild && renderAction("addChild")}
             {renderAction("arrangeOrgChart")}
+            {renderAction(actionOrgChartLabel.name)}
             {showCropEditorAction && renderAction("cropEditor")}
             {showLineEditorAction && renderAction("toggleLinearEditor")}
           </div>
@@ -762,6 +763,7 @@ const CombinedExtraActions = ({
                   {showLinkIcon && renderAction("hyperlink")}
                   {showAddChild && renderAction("addChild")}
                   {renderAction("arrangeOrgChart")}
+                  {renderAction(actionOrgChartLabel.name)}
                   {showCropEditorAction && renderAction("cropEditor")}
                   {showDuplicate && renderAction("duplicateSelection")}
                   {showDelete && renderAction("deleteSelectedElements")}
