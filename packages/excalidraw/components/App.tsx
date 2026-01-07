@@ -11880,14 +11880,6 @@ class App extends React.Component<AppProps, AppState> {
     }
   }
 
-
-    this.props.onPointerUpdate?.({
-      pointer,
-      button,
-      pointersMap: gesture.pointers,
-    });
-  };
-
   private resetShouldCacheIgnoreZoomDebounced = debounce(() => {
     if (!this.unmounted) {
       this.setState({ shouldCacheIgnoreZoom: false });
