@@ -8,6 +8,8 @@ import {
   actionClearCanvas,
   actionLoadScene,
   actionSaveToActiveFile,
+  actionToggleGridMode,
+  actionToggleObjectsSnapMode,
   actionToggleSearchMenu,
   actionToggleTheme,
 } from "../../actions";
@@ -39,6 +41,7 @@ import {
   SunIcon,
   TrashIcon,
 } from "../icons";
+import { gridIcon, magnetIcon } from "../icons";
 
 import "./DefaultItems.scss";
 
@@ -142,6 +145,54 @@ export const SearchMenu = (opts?: { className?: string }) => {
   );
 };
 SearchMenu.displayName = "SearchMenu";
+
+export const ToggleGridMode = () => {
+  const { t } = useI18n();
+  const actionManager = useExcalidrawActionManager();
+
+  if (!actionManager.isActionEnabled(actionToggleGridMode)) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuItem
+      icon={gridIcon}
+      data-testid="grid-mode-button"
+      onSelect={() => {
+        actionManager.executeAction(actionToggleGridMode);
+      }}
+      shortcut={getShortcutFromShortcutName("gridMode")}
+      aria-label={t("labels.toggleGrid")}
+    >
+      {t("labels.toggleGrid")}
+    </DropdownMenuItem>
+  );
+};
+ToggleGridMode.displayName = "ToggleGridMode";
+
+export const ToggleObjectsSnapMode = () => {
+  const { t } = useI18n();
+  const actionManager = useExcalidrawActionManager();
+
+  if (!actionManager.isActionEnabled(actionToggleObjectsSnapMode)) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuItem
+      icon={magnetIcon}
+      data-testid="objects-snap-mode-button"
+      onSelect={() => {
+        actionManager.executeAction(actionToggleObjectsSnapMode);
+      }}
+      shortcut={getShortcutFromShortcutName("objectsSnapMode")}
+      aria-label={t("buttons.objectsSnapMode")}
+    >
+      {t("buttons.objectsSnapMode")}
+    </DropdownMenuItem>
+  );
+};
+ToggleObjectsSnapMode.displayName = "ToggleObjectsSnapMode";
 
 export const ClearCanvas = () => {
   const { t } = useI18n();

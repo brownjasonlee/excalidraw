@@ -109,6 +109,8 @@ const DefaultMainMenu: React.FC<{
         <MainMenu.DefaultItems.SaveAsImage />
       )}
       <MainMenu.DefaultItems.SearchMenu />
+      <MainMenu.DefaultItems.ToggleGridMode />
+      <MainMenu.DefaultItems.ToggleObjectsSnapMode />
       <MainMenu.DefaultItems.ClearCanvas />
       <MainMenu.Separator />
       <MainMenu.Group title="Excalidraw links">
