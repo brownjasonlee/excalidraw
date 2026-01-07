@@ -83,6 +83,7 @@ export type ActionName =
   | "loadScene"
   | "duplicateSelection"
   | "addChild"
+  | "arrangeOrgChart"
   | "deleteSelectedElements"
   | "changeViewBackgroundColor"
   | "clearCanvas"

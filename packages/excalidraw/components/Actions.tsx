@@ -312,6 +312,7 @@ export const SelectedShapeActions = ({
             {renderAction("ungroup")}
             {showLinkIcon && renderAction("hyperlink")}
             {showAddChild && renderAction("addChild")}
+            {renderAction("arrangeOrgChart")}
             {showCropEditorAction && renderAction("cropEditor")}
             {showLineEditorAction && renderAction("toggleLinearEditor")}
           </div>
@@ -760,6 +761,7 @@ const CombinedExtraActions = ({
                   {renderAction("ungroup")}
                   {showLinkIcon && renderAction("hyperlink")}
                   {showAddChild && renderAction("addChild")}
+                  {renderAction("arrangeOrgChart")}
                   {showCropEditorAction && renderAction("cropEditor")}
                   {showDuplicate && renderAction("duplicateSelection")}
                   {showDelete && renderAction("deleteSelectedElements")}
