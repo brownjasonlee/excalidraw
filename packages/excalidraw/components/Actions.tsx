@@ -13,6 +13,7 @@ import {
   shouldAllowVerticalAlign,
   suppportsHorizontalAlign,
   hasBoundTextElement,
+  isBindableElement,
   isElbowArrow,
   isImageElement,
   isLinearElement,
@@ -169,6 +170,12 @@ export const SelectedShapeActions = ({
 
   const showLinkIcon =
     targetElements.length === 1 || isSingleElementBoundContainer;
+  const addChildTarget = isSingleElementBoundContainer
+    ? targetElements.find((element) => hasBoundTextElement(element))
+    : targetElements.length === 1
+    ? targetElements[0]
+    : null;
+  const showAddChild = addChildTarget ? isBindableElement(addChildTarget) : false;
 
   const showLineEditorAction =
     !appState.selectedLinearElement?.isEditing &&
@@ -304,6 +311,7 @@ export const SelectedShapeActions = ({
             {renderAction("group")}
             {renderAction("ungroup")}
             {showLinkIcon && renderAction("hyperlink")}
+            {showAddChild && renderAction("addChild")}
             {showCropEditorAction && renderAction("cropEditor")}
             {showLineEditorAction && renderAction("toggleLinearEditor")}
           </div>
@@ -628,7 +636,6 @@ const CombinedExtraActions = ({
     !appState.croppingElementId &&
     targetElements.length === 1 &&
     isImageElement(targetElements[0]);
-  const showLinkIcon = targetElements.length === 1;
   const showAlignActions = alignActionsPredicate(appState, app);
   let isSingleElementBoundContainer = false;
   if (
@@ -638,6 +645,16 @@ const CombinedExtraActions = ({
   ) {
     isSingleElementBoundContainer = true;
   }
+  const showLinkIcon =
+    targetElements.length === 1 || isSingleElementBoundContainer;
+  const addChildTarget = isSingleElementBoundContainer
+    ? targetElements.find((element) => hasBoundTextElement(element))
+    : targetElements.length === 1
+    ? targetElements[0]
+    : null;
+  const showAddChild = addChildTarget
+    ? isBindableElement(addChildTarget)
+    : false;
 
   const isRTL = document.documentElement.getAttribute("dir") === "rtl";
   const isOpen = appState.openPopup === "compactOtherProperties";
@@ -742,6 +759,7 @@ const CombinedExtraActions = ({
                   {renderAction("group")}
                   {renderAction("ungroup")}
                   {showLinkIcon && renderAction("hyperlink")}
+                  {showAddChild && renderAction("addChild")}
                   {showCropEditorAction && renderAction("cropEditor")}
                   {showDuplicate && renderAction("duplicateSelection")}
                   {showDelete && renderAction("deleteSelectedElements")}
