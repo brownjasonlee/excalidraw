@@ -82,6 +82,8 @@ export type ActionName =
   | "saveFileToDisk"
   | "loadScene"
   | "duplicateSelection"
+  | "addChild"
+  | "arrangeOrgChart"
   | "deleteSelectedElements"
   | "changeViewBackgroundColor"
   | "clearCanvas"
