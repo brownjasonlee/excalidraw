@@ -200,6 +200,7 @@ ToggleObjectsSnapMode.displayName = "ToggleObjectsSnapMode";
 export const ToggleOrgChartMode = () => {
   const { t } = useI18n();
   const actionManager = useExcalidrawActionManager();
+  const appState = useUIAppState();
 
   if (!actionManager.isActionEnabled(actionToggleOrgChartMode)) {
     return null;
@@ -215,6 +216,9 @@ export const ToggleOrgChartMode = () => {
       aria-label={t("labels.orgChartMode")}
     >
       {t("labels.orgChartMode")}
+      {appState.orgChartModeEnabled && (
+        <DropdownMenuItem.Badge>ON</DropdownMenuItem.Badge>
+      )}
     </DropdownMenuItem>
   );
 };

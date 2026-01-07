@@ -41,6 +41,7 @@ import {
   type OrgChartData,
   type OrgChartElementData,
 } from "./types";
+import { getOrgChartNodeLabelText } from "./labels";
 
 const DEFAULT_NODE_WIDTH = 200;
 const DEFAULT_NODE_HEIGHT = 100;
@@ -248,8 +249,14 @@ export const createOrgChartElements = (
       },
     }) as ExcalidrawBindableElement;
 
-    const textElement = node.name
-      ? createBoundText(nodeElement, node.name, appState)
+    const labelText = getOrgChartNodeLabelText({
+      type: "node",
+      nodeId,
+      name: node.name,
+      attributes: node.attributes ?? [],
+    });
+    const textElement = labelText
+      ? createBoundText(nodeElement, labelText, appState)
       : null;
 
     const nextNode = textElement

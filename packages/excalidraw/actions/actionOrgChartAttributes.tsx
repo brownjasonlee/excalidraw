@@ -1,4 +1,4 @@
-import { arrayToMap } from "@excalidraw/common";
+import { arrayToMap, randomId } from "@excalidraw/common";
 import { getFontString, getLineHeight } from "@excalidraw/common";
 
 import {
@@ -20,15 +20,15 @@ import type {
 } from "@excalidraw/element/types";
 
 import { ToolButton } from "../components/ToolButton";
-import { TextIcon } from "../components/icons";
+import { adjustmentsIcon } from "../components/icons";
 import { t } from "../i18n";
 import { isSomeElementSelected } from "../scene";
-
 import { getOrgChartNodeLabelText } from "../orgChart/labels";
 
 import { register } from "./register";
 
 import type { AppClassProperties, AppState } from "../types";
+import type { OrgChartAttribute, OrgChartElementData } from "../orgChart/types";
 
 const getSelectedNode = (
   app: AppClassProperties,
@@ -51,6 +51,42 @@ const getSelectedNode = (
   }
 
   return null;
+};
+
+const formatAttributes = (attributes?: OrgChartAttribute[]) => {
+  if (!attributes?.length) {
+    return "";
+  }
+  return attributes
+    .map((attr) => {
+      if (!attr.name) {
+        return "";
+      }
+      const value = attr.value ? `=${attr.value}` : "";
+      const color = attr.color ? `#${attr.color.replace("#", "")}` : "";
+      return `${attr.name}${value}${color}`;
+    })
+    .filter(Boolean)
+    .join("; ");
+};
+
+const parseAttributes = (input: string): OrgChartAttribute[] => {
+  return input
+    .split(";")
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const [left, colorPart] = entry.split("#");
+      const [name, value] = left.split("=").map((part) => part.trim());
+      return {
+        id: randomId(),
+        name,
+        value: value || undefined,
+        color: colorPart ? `#${colorPart.trim()}` : undefined,
+        display: "label",
+      };
+    })
+    .filter((attr) => Boolean(attr.name));
 };
 
 const buildLabelTextElement = (
@@ -103,10 +139,10 @@ const insertTextAfterContainer = (
   return nextElements;
 };
 
-export const actionOrgChartLabel = register({
-  name: "orgChartLabel",
-  label: "labels.orgChartSetLabel",
-  icon: TextIcon,
+export const actionOrgChartAttributes = register({
+  name: "orgChartAttributes",
+  label: "labels.orgChartSetAttributes",
+  icon: adjustmentsIcon,
   predicate: (_elements, appState, __, app) =>
     appState.orgChartModeEnabled && Boolean(getSelectedNode(app, appState)),
   perform: (elements, appState, _, app) => {
@@ -117,41 +153,35 @@ export const actionOrgChartLabel = register({
 
     const elementsMap = arrayToMap(elements);
     const boundText = getBoundTextElement(container, elementsMap);
-    const currentLabel =
+    const existingData =
       container.customData?.orgChart?.type === "node"
-        ? container.customData.orgChart.name
-        : boundText?.text || "";
-
-    const nextLabel = window.prompt(
-      t("labels.orgChartSetLabelPrompt"),
-      currentLabel,
+        ? container.customData.orgChart
+        : null;
+    const currentAttributes = existingData?.attributes || [];
+    const nextRaw = window.prompt(
+      t("labels.orgChartSetAttributesPrompt"),
+      formatAttributes(currentAttributes),
     );
-    if (!nextLabel) {
+    if (nextRaw === null) {
       return false;
     }
+
+    const nextAttributes = parseAttributes(nextRaw);
+    const nextData: OrgChartElementData = {
+      type: "node",
+      nodeId: existingData?.nodeId || container.id,
+      name: existingData?.name || boundText?.text || "Node",
+      attributes: nextAttributes,
+    };
 
     const nextContainer = newElementWith(container, {
       customData: {
         ...container.customData,
-        orgChart: {
-          type: "node",
-          nodeId:
-            container.customData?.orgChart?.type === "node"
-              ? container.customData.orgChart.nodeId
-              : container.id,
-          name: nextLabel,
-          attributes:
-            container.customData?.orgChart?.type === "node"
-              ? container.customData.orgChart.attributes
-              : [],
-        },
+        orgChart: nextData,
       },
     });
 
-    const labelText = getOrgChartNodeLabelText(
-      nextContainer.customData?.orgChart || null,
-    );
-
+    const labelText = getOrgChartNodeLabelText(nextData);
     let nextElements = elements.map((element) =>
       element.id === nextContainer.id ? nextContainer : element,
     );
@@ -178,7 +208,7 @@ export const actionOrgChartLabel = register({
       nextElements = nextElements.map((element) =>
         element.id === nextText.id ? nextText : element,
       );
-    } else {
+    } else if (labelText) {
       const textElement = buildLabelTextElement(
         nextContainer,
         labelText,
@@ -210,10 +240,10 @@ export const actionOrgChartLabel = register({
     <ToolButton
       hidden={!appState.orgChartModeEnabled || !getSelectedNode(app, appState)}
       type="button"
-      icon={TextIcon}
+      icon={adjustmentsIcon}
       onClick={() => updateData(null)}
-      title={t("labels.orgChartSetLabel")}
-      aria-label={t("labels.orgChartSetLabel")}
+      title={t("labels.orgChartSetAttributes")}
+      aria-label={t("labels.orgChartSetAttributes")}
       visible={isSomeElementSelected(getNonDeletedElements(elements), appState)}
     />
   ),

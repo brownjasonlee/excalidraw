@@ -86,6 +86,7 @@ export type ActionName =
   | "arrangeOrgChart"
   | "orgChartMode"
   | "orgChartLabel"
+  | "orgChartAttributes"
   | "exportOrgChart"
   | "importOrgChart"
   | "deleteSelectedElements"

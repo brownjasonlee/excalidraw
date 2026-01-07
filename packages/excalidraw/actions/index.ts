@@ -13,6 +13,7 @@ export { actionExportOrgChart } from "./actionExportOrgChart";
 export { actionImportOrgChart } from "./actionImportOrgChart";
 export { actionToggleOrgChartMode } from "./actionToggleOrgChartMode";
 export { actionOrgChartLabel } from "./actionOrgChartLabel";
+export { actionOrgChartAttributes } from "./actionOrgChartAttributes";
 export {
   actionChangeStrokeColor,
   actionChangeBackgroundColor,
