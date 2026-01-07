@@ -3,7 +3,6 @@ import clsx from "clsx";
 
 import { KEYS, capitalizeString } from "@excalidraw/common";
 
-import { trackEvent } from "../analytics";
 
 import { t } from "../i18n";
 
@@ -30,7 +29,6 @@ import {
   ImageIcon,
   frameToolIcon,
   EmbedIcon,
-  laserPointerToolIcon,
   LassoIcon,
   mermaidLogoIcon,
   MagicIcon,
@@ -120,14 +118,12 @@ export const MobileToolBar = ({
   }, [activeTool.type]);
 
   const frameToolSelected = activeTool.type === "frame";
-  const laserToolSelected = activeTool.type === "laser";
   const embeddableToolSelected = activeTool.type === "embeddable";
 
   const { TTDDialogTriggerTunnel } = useTunnels();
 
   const handleToolChange = (toolType: string, pointerType?: string) => {
     if (app.state.activeTool.type !== toolType) {
-      trackEvent("toolbar", toolType, "ui");
     }
 
     if (toolType === "selection") {
@@ -159,7 +155,6 @@ export const MobileToolBar = ({
     "text",
     "frame",
     "embeddable",
-    "laser",
     "magicframe",
   ].filter((tool) => {
     if (showTextToolOutside && tool === "text") {
@@ -183,8 +178,6 @@ export const MobileToolBar = ({
       ? frameToolIcon
       : activeTool.type === "embeddable"
       ? EmbedIcon
-      : activeTool.type === "laser"
-      ? laserPointerToolIcon
       : activeTool.type === "magicframe"
       ? MagicIcon
       : extraToolsIcon
@@ -444,15 +437,6 @@ export const MobileToolBar = ({
             selected={embeddableToolSelected}
           >
             {t("toolBar.embeddable")}
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            onSelect={() => app.setActiveTool({ type: "laser" })}
-            icon={laserPointerToolIcon}
-            data-testid="toolbar-laser"
-            selected={laserToolSelected}
-            shortcut={KEYS.K.toLocaleUpperCase()}
-          >
-            {t("toolBar.laser")}
           </DropdownMenu.Item>
           <div style={{ margin: "6px 0", fontSize: 14, fontWeight: 600 }}>
             Generate

@@ -5,9 +5,7 @@ import { DEFAULT_UI_OPTIONS, isShallowEqual } from "@excalidraw/common";
 import App from "./components/App";
 import { InitializeApp } from "./components/InitializeApp";
 import Footer from "./components/footer/FooterCenter";
-import LiveCollaborationTrigger from "./components/live-collaboration/LiveCollaborationTrigger";
 import MainMenu from "./components/main-menu/MainMenu";
-import WelcomeScreen from "./components/welcome-screen/WelcomeScreen";
 import { defaultLang } from "./i18n";
 import { EditorJotaiProvider, editorJotaiStore } from "./editor-jotai";
 import polyfill from "./polyfill";
@@ -26,8 +24,6 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onIncrement,
     initialData,
     excalidrawAPI,
-    isCollaborating = false,
-    onPointerUpdate,
     renderTopLeftUI,
     renderTopRightUI,
     langCode = defaultLang.code,
@@ -119,8 +115,6 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           onIncrement={onIncrement}
           initialData={initialData}
           excalidrawAPI={excalidrawAPI}
-          isCollaborating={isCollaborating}
-          onPointerUpdate={onPointerUpdate}
           renderTopLeftUI={renderTopLeftUI}
           renderTopRightUI={renderTopRightUI}
           langCode={langCode}
@@ -282,8 +276,6 @@ export { Footer };
 export { MainMenu };
 export { Ellipsify } from "./components/Ellipsify";
 export { useEditorInterface, useStylesPanelMode } from "./components/App";
-export { WelcomeScreen };
-export { LiveCollaborationTrigger };
 export { Stats } from "./components/Stats";
 
 export { DefaultSidebar } from "./components/DefaultSidebar";

@@ -1172,7 +1172,7 @@ export class ElementsDelta implements DeltaContainer<SceneElementsMap> {
     const removed: Record<string, Delta<ElementPartial>> = {};
     const updated: Record<string, Delta<ElementPartial>> = {};
 
-    // this might be needed only in same edge cases, like during collab, when `isDeleted` elements get removed or when we (un)intentionally remove the elements
+    // this might be needed only in edge cases, like when `isDeleted` elements get removed or when we (un)intentionally remove the elements
     for (const prevElement of prevElements.values()) {
       const nextElement = nextElements.get(prevElement.id);
 

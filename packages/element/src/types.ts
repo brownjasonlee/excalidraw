@@ -56,10 +56,10 @@ type _ExcalidrawElementBase = Readonly<{
       doesn't differ across renders. */
   seed: number;
   /** Integer that is sequentially incremented on each change. Used to reconcile
-      elements during collaboration or when saving to server. */
+      elements during async updates or when saving to storage. */
   version: number;
   /** Random integer that is regenerated on each change.
-      Used for deterministic reconciliation of updates during collaboration,
+      Used for deterministic reconciliation of updates during async updates,
       in case the versions (see above) are identical. */
   versionNonce: number;
   /** String in a fractional form defined by https://github.com/rocicorp/fractional-indexing.

@@ -109,7 +109,6 @@ export const AllowedExcalidrawActiveTools: Record<
   frame: true,
   embeddable: true,
   hand: true,
-  laser: false,
   magicframe: false,
 };
 
@@ -374,7 +373,7 @@ export const restoreElement = (
       });
 
       // if empty text, mark as deleted. We keep in array
-      // for data integrity purposes (collab etc.)
+      // for data integrity during sync.
       if (opts?.deleteInvisibleElements && !text && !element.isDeleted) {
         // TODO: we should not do this since it breaks sync / versioning when we exchange / apply just deltas and restore the elements (deletion isn't recorded)
         element = { ...element, originalText: text, isDeleted: true };
@@ -798,8 +797,8 @@ export const restoreElements = <T extends ExcalidrawElement>(
  * See https://github.com/excalidraw/excalidraw/issues/3795
  *
  * Generally use this on editor boundaries (importing from file etc.), though
- * it does not apply universally (e.g. we don't want to do this for collab
- * updates).
+ * it does not apply universally (e.g. we don't want to do this for
+ * incremental updates).
  */
 export const bumpElementVersions = <T extends ExcalidrawElement>(
   targetElements: readonly T[],

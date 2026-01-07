@@ -5,7 +5,6 @@ import { capitalizeString } from "@excalidraw/common";
 
 import * as Popover from "@radix-ui/react-popover";
 
-import { trackEvent } from "../analytics";
 
 import { ToolButton } from "./ToolButton";
 
@@ -111,7 +110,6 @@ export const ToolPopover = ({
             data-testid={`toolbar-${type}`}
             onChange={() => {
               if (app.state.activeTool.type !== type) {
-                trackEvent("toolbar", type, "ui");
               }
               app.setActiveTool({ type: type as any });
               onToolChange?.(type);

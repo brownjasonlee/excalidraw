@@ -4,7 +4,6 @@ import { isFiniteNumber } from "@excalidraw/math";
 
 import type { NonDeletedExcalidrawElement } from "@excalidraw/element/types";
 
-import { trackEvent } from "../../analytics";
 import { useUIAppState } from "../../context/ui-appState";
 import { atom, useAtom } from "../../editor-jotai";
 import { t } from "../../i18n";
@@ -148,7 +147,6 @@ export const TTDDialogBase = withInternalFallback(
       try {
         setOnTextSubmitInProgess(true);
 
-        trackEvent("ai", "generate", "ttd");
 
         const { generatedResponse, error, rateLimit, rateLimitRemaining } =
           await rest.onTextSubmit(prompt);
@@ -181,7 +179,6 @@ export const TTDDialogBase = withInternalFallback(
             setError,
             mermaidDefinition: generatedResponse,
           });
-          trackEvent("ai", "mermaid parse success", "ttd");
         } catch (error: any) {
           console.info(
             `%cTTD mermaid render errror: ${error.message}`,
@@ -191,7 +188,6 @@ export const TTDDialogBase = withInternalFallback(
             `>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nTTD mermaid definition render errror: ${error.message}`,
             "color: yellow",
           );
-          trackEvent("ai", "mermaid parse failed", "ttd");
           setError(
             new Error(
               "Generated an invalid diagram :(. You may also try a different prompt.",

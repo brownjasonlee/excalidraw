@@ -54,7 +54,6 @@ import type { AppState, Offsets } from "../types";
 export const actionChangeViewBackgroundColor = register<Partial<AppState>>({
   name: "changeViewBackgroundColor",
   label: "labels.canvasBackground",
-  trackEvent: false,
   predicate: (elements, appState, props, app) => {
     return (
       !!app.props.UIOptions.canvasActions.changeViewBackgroundColor &&
@@ -92,7 +91,6 @@ export const actionClearCanvas = register({
   name: "clearCanvas",
   label: "labels.clearCanvas",
   icon: TrashIcon,
-  trackEvent: { category: "canvas" },
   predicate: (elements, appState, props, app) => {
     return (
       !!app.props.UIOptions.canvasActions.clearCanvas &&
@@ -137,7 +135,6 @@ export const actionZoomIn = register({
   label: "buttons.zoomIn",
   viewMode: true,
   icon: ZoomInIcon,
-  trackEvent: { category: "canvas" },
   perform: (_elements, appState, _, app) => {
     return {
       appState: {
@@ -150,7 +147,6 @@ export const actionZoomIn = register({
           },
           appState,
         ),
-        userToFollow: null,
       },
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
@@ -178,7 +174,6 @@ export const actionZoomOut = register({
   label: "buttons.zoomOut",
   icon: ZoomOutIcon,
   viewMode: true,
-  trackEvent: { category: "canvas" },
   perform: (_elements, appState, _, app) => {
     return {
       appState: {
@@ -191,7 +186,6 @@ export const actionZoomOut = register({
           },
           appState,
         ),
-        userToFollow: null,
       },
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
@@ -219,7 +213,6 @@ export const actionResetZoom = register({
   label: "buttons.resetZoom",
   icon: ZoomResetIcon,
   viewMode: true,
-  trackEvent: { category: "canvas" },
   perform: (_elements, appState, _, app) => {
     return {
       appState: {
@@ -232,7 +225,6 @@ export const actionResetZoom = register({
           },
           appState,
         ),
-        userToFollow: null,
       },
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
@@ -396,14 +388,12 @@ export const actionZoomToFitSelectionInViewport = register({
   name: "zoomToFitSelectionInViewport",
   label: "labels.zoomToFitViewport",
   icon: zoomAreaIcon,
-  trackEvent: { category: "canvas" },
   perform: (elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
     return zoomToFit({
       targetElements: selectedElements.length ? selectedElements : elements,
       appState: {
         ...appState,
-        userToFollow: null,
       },
       fitToViewport: false,
       canvasOffsets: app.getEditorUIOffsets(),
@@ -422,14 +412,12 @@ export const actionZoomToFitSelection = register({
   name: "zoomToFitSelection",
   label: "helpDialog.zoomToSelection",
   icon: zoomAreaIcon,
-  trackEvent: { category: "canvas" },
   perform: (elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
     return zoomToFit({
       targetElements: selectedElements.length ? selectedElements : elements,
       appState: {
         ...appState,
-        userToFollow: null,
       },
       fitToViewport: true,
       canvasOffsets: app.getEditorUIOffsets(),
@@ -448,13 +436,11 @@ export const actionZoomToFit = register({
   label: "helpDialog.zoomToFit",
   icon: zoomAreaIcon,
   viewMode: true,
-  trackEvent: { category: "canvas" },
   perform: (elements, appState, _, app) =>
     zoomToFit({
       targetElements: elements,
       appState: {
         ...appState,
-        userToFollow: null,
       },
       fitToViewport: false,
       canvasOffsets: app.getEditorUIOffsets(),
@@ -477,7 +463,6 @@ export const actionToggleTheme = register<AppState["theme"]>({
   icon: (appState, elements) =>
     appState.theme === THEME.LIGHT ? MoonIcon : SunIcon,
   viewMode: true,
-  trackEvent: { category: "canvas" },
   perform: (_, appState, value) => {
     return {
       appState: {
@@ -497,7 +482,6 @@ export const actionToggleTheme = register<AppState["theme"]>({
 export const actionToggleEraserTool = register({
   name: "toggleEraserTool",
   label: "toolBar.eraser",
-  trackEvent: { category: "toolbar" },
   perform: (elements, appState, _, app) => {
     let activeTool: AppState["activeTool"];
 
@@ -533,7 +517,6 @@ export const actionToggleLassoTool = register({
   name: "toggleLassoTool",
   label: "toolBar.lasso",
   icon: LassoIcon,
-  trackEvent: { category: "toolbar" },
   predicate: (elements, appState, props, app) => {
     return app.state.preferredSelectionTool.type !== "lasso";
   },
@@ -568,7 +551,6 @@ export const actionToggleLassoTool = register({
 export const actionToggleHandTool = register({
   name: "toggleHandTool",
   label: "toolBar.hand",
-  trackEvent: { category: "toolbar" },
   icon: handIcon,
   viewMode: false,
   perform: (elements, appState, _, app) => {

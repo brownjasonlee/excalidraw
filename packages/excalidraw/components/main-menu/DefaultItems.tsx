@@ -8,12 +8,10 @@ import {
   actionClearCanvas,
   actionLoadScene,
   actionSaveToActiveFile,
-  actionShortcuts,
   actionToggleSearchMenu,
   actionToggleTheme,
 } from "../../actions";
 import { getShortcutFromShortcutName } from "../../actions/shortcuts";
-import { trackEvent } from "../../analytics";
 import { useUIAppState } from "../../context/ui-appState";
 import { useSetAtom } from "../../editor-jotai";
 import { useI18n } from "../../i18n";
@@ -31,18 +29,15 @@ import DropdownMenuItemContentRadio from "../dropdownMenu/DropdownMenuItemConten
 import DropdownMenuItemLink from "../dropdownMenu/DropdownMenuItemLink";
 import { GithubIcon, DiscordIcon, XBrandIcon } from "../icons";
 import {
-  boltIcon,
   DeviceDesktopIcon,
   ExportIcon,
   ExportImageIcon,
-  HelpIcon,
   LoadIcon,
   MoonIcon,
   save,
   searchIcon,
   SunIcon,
   TrashIcon,
-  usersIcon,
 } from "../icons";
 
 import "./DefaultItems.scss";
@@ -127,28 +122,6 @@ export const SaveAsImage = () => {
 };
 SaveAsImage.displayName = "SaveAsImage";
 
-export const CommandPalette = (opts?: { className?: string }) => {
-  const setAppState = useExcalidrawSetAppState();
-  const { t } = useI18n();
-
-  return (
-    <DropdownMenuItem
-      icon={boltIcon}
-      data-testid="command-palette-button"
-      onSelect={() => {
-        trackEvent("command_palette", "open", "menu");
-        setAppState({ openDialog: { name: "commandPalette" } });
-      }}
-      shortcut={getShortcutFromShortcutName("commandPalette")}
-      aria-label={t("commandPalette.title")}
-      className={opts?.className}
-    >
-      {t("commandPalette.title")}
-    </DropdownMenuItem>
-  );
-};
-CommandPalette.displayName = "CommandPalette";
-
 export const SearchMenu = (opts?: { className?: string }) => {
   const { t } = useI18n();
   const actionManager = useExcalidrawActionManager();
@@ -169,25 +142,6 @@ export const SearchMenu = (opts?: { className?: string }) => {
   );
 };
 SearchMenu.displayName = "SearchMenu";
-
-export const Help = () => {
-  const { t } = useI18n();
-
-  const actionManager = useExcalidrawActionManager();
-
-  return (
-    <DropdownMenuItem
-      data-testid="help-menu-item"
-      icon={HelpIcon}
-      onSelect={() => actionManager.executeAction(actionShortcuts)}
-      shortcut="?"
-      aria-label={t("helpDialog.title")}
-    >
-      {t("helpDialog.title")}
-    </DropdownMenuItem>
-  );
-};
-Help.displayName = "Help";
 
 export const ClearCanvas = () => {
   const { t } = useI18n();
@@ -369,27 +323,3 @@ export const Socials = () => {
   );
 };
 Socials.displayName = "Socials";
-
-export const LiveCollaborationTrigger = ({
-  onSelect,
-  isCollaborating,
-}: {
-  onSelect: () => void;
-  isCollaborating: boolean;
-}) => {
-  const { t } = useI18n();
-  return (
-    <DropdownMenuItem
-      data-testid="collab-button"
-      icon={usersIcon}
-      className={clsx({
-        "active-collab": isCollaborating,
-      })}
-      onSelect={onSelect}
-    >
-      {t("labels.liveCollaboration")}
-    </DropdownMenuItem>
-  );
-};
-
-LiveCollaborationTrigger.displayName = "LiveCollaborationTrigger";

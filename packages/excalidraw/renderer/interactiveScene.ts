@@ -77,7 +77,6 @@ import {
   type InteractiveCanvasAppState,
 } from "../types";
 
-import { getClientColor, renderRemoteCursors } from "../clients";
 
 import {
   bootstrapCanvas,
@@ -1135,7 +1134,7 @@ const _renderInteractiveScene = ({
     undefined;
 
   visibleElements.forEach((element) => {
-    // Getting the element using LinearElementEditor during collab mismatches version - being one head of visible elements due to
+    // Getting the element using LinearElementEditor during async updates mismatches version - being one head of visible elements due to
     // ShapeCache returns empty hence making sure that we get the
     // correct element from visible elements
     if (
@@ -1236,7 +1235,7 @@ const _renderInteractiveScene = ({
     isFrameLikeElement(element),
   );
 
-  // Getting the element using LinearElementEditor during collab mismatches version - being one head of visible elements due to
+  // Getting the element using LinearElementEditor during async updates mismatches version - being one head of visible elements due to
   // ShapeCache returns empty hence making sure that we get the
   // correct element from visible elements
   if (
@@ -1311,9 +1310,6 @@ const _renderInteractiveScene = ({
 
       for (const element of elementsMap.values()) {
         const selectionColors = [];
-        const remoteClients = renderConfig.remoteSelectedElementIds.get(
-          element.id,
-        );
         if (
           !(
             // Elbow arrow elements cannot be selected when bound on either end
@@ -1331,18 +1327,6 @@ const _renderInteractiveScene = ({
           ) {
             selectionColors.push(selectionColor);
           }
-          // remote users
-          if (remoteClients) {
-            selectionColors.push(
-              ...remoteClients.map((socketId) => {
-                const background = getClientColor(
-                  socketId,
-                  appState.collaborators.get(socketId),
-                );
-                return background;
-              }),
-            );
-          }
         }
 
         if (selectionColors.length) {
@@ -1358,7 +1342,7 @@ const _renderInteractiveScene = ({
             x2,
             y2,
             selectionColors: element.locked ? ["#ced4da"] : selectionColors,
-            dashed: !!remoteClients || element.locked,
+            dashed: element.locked,
             cx,
             cy,
             activeEmbeddable:
@@ -1545,14 +1529,6 @@ const _renderInteractiveScene = ({
   renderSnaps(context, appState);
 
   context.restore();
-
-  renderRemoteCursors({
-    context,
-    renderConfig,
-    appState,
-    normalizedWidth,
-    normalizedHeight,
-  });
 
   // Paint scrollbars
   let scrollBars;

@@ -24,9 +24,7 @@ export const getDefaultAppState = (): Omit<
   "offsetTop" | "offsetLeft" | "width" | "height"
 > => {
   return {
-    showWelcomeScreen: false,
     theme: THEME.LIGHT,
-    collaborators: new Map(),
     currentChartType: "bar",
     currentItemBackgroundColor: DEFAULT_ELEMENT_PROPS.backgroundColor,
     currentItemEndArrowhead: "arrow",
@@ -120,8 +118,6 @@ export const getDefaultAppState = (): Omit<
       y: 0,
     },
     objectsSnapModeEnabled: false,
-    userToFollow: null,
-    followedBy: new Set(),
     isCropping: false,
     croppingElementId: null,
     searchMatches: null,
@@ -141,15 +137,13 @@ const APP_STATE_STORAGE_CONF = (<
     browser: boolean;
     /** whether to keep when exporting to file/database */
     export: boolean;
-    /** server (shareLink/collab/...) */
+    /** server (shareLink/...) */
     server: boolean;
   },
   T extends Record<keyof AppState, Values>,
 >(config: { [K in keyof T]: K extends keyof AppState ? T[K] : never }) =>
   config)({
-  showWelcomeScreen: { browser: true, export: false, server: false },
   theme: { browser: true, export: false, server: false },
-  collaborators: { browser: false, export: false, server: false },
   currentChartType: { browser: true, export: false, server: false },
   currentItemBackgroundColor: { browser: true, export: false, server: false },
   currentItemEndArrowhead: { browser: true, export: false, server: false },
@@ -246,8 +240,6 @@ const APP_STATE_STORAGE_CONF = (<
   snapLines: { browser: false, export: false, server: false },
   originSnapOffset: { browser: false, export: false, server: false },
   objectsSnapModeEnabled: { browser: true, export: false, server: false },
-  userToFollow: { browser: false, export: false, server: false },
-  followedBy: { browser: false, export: false, server: false },
   isCropping: { browser: false, export: false, server: false },
   croppingElementId: { browser: false, export: false, server: false },
   searchMatches: { browser: false, export: false, server: false },

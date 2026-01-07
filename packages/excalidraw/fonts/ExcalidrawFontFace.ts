@@ -1,7 +1,5 @@
 import { promiseTry, LOCAL_FONT_PROTOCOL } from "@excalidraw/common";
 
-import { subsetWoff2GlyphsByCodepoints } from "../subset/subset-main";
-
 type DataURL = string;
 
 export class ExcalidrawFontFace {
@@ -53,62 +51,11 @@ export class ExcalidrawFontFace {
   /**
    * Tries to fetch woff2 content, based on the registered urls (from first to last, treated as fallbacks).
    *
-   * @returns base64 with subsetted glyphs based on the passed codepoint, last defined url otherwise
+   * @returns url string for the first available font source
    */
   public async getContent(codePoints: Array<number>): Promise<string> {
-    let i = 0;
-    const errorMessages = [];
-
-    while (i < this.urls.length) {
-      const url = this.urls[i];
-
-      try {
-        const arrayBuffer = await this.fetchFont(url);
-        const base64 = await subsetWoff2GlyphsByCodepoints(
-          arrayBuffer,
-          codePoints,
-        );
-
-        return base64;
-      } catch (e) {
-        errorMessages.push(`"${url.toString()}" returned error "${e}"`);
-      }
-
-      i++;
-    }
-
-    console.error(
-      `Failed to fetch font family "${this.fontFace.family}"`,
-      JSON.stringify(errorMessages, undefined, 2),
-    );
-
-    // in case of issues, at least return the last url as a content
-    // defaults to unpkg for bundled fonts (so that we don't have to host them forever) and http url for others
-    return this.urls.length ? this.urls[this.urls.length - 1].toString() : "";
-  }
-
-  public fetchFont(url: URL | DataURL): Promise<ArrayBuffer> {
-    return promiseTry(async () => {
-      const response = await fetch(url, {
-        // always prefer cache (even stale), otherwise it always triggers an unnecessary validation request
-        // which we don't need as we are controlling freshness of the fonts with the stable hash suffix in the url
-        // https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
-        cache: "force-cache",
-        headers: {
-          Accept: "font/woff2",
-        },
-      });
-
-      if (!response.ok) {
-        const urlString = url instanceof URL ? url.toString() : "dataurl";
-        throw new Error(
-          `Failed to fetch "${urlString}": ${response.statusText}`,
-        );
-      }
-
-      const arrayBuffer = await response.arrayBuffer();
-      return arrayBuffer;
-    });
+    const url = this.urls[0];
+    return url ? url.toString() : "";
   }
 
   private getUnicodeRangeRegex() {

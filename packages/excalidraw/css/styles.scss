@@ -214,7 +214,6 @@ body.excalidraw-cursor-resize * {
     margin: 1px;
   }
 
-  .welcome-screen-menu-item:focus-visible,
   .dropdown-menu-item:focus-visible,
   button:focus-visible,
   .buttonList label:focus-within,
@@ -244,10 +243,6 @@ body.excalidraw-cursor-resize * {
     z-index: var(--zIndex-ui-top);
     display: flex;
     flex-direction: column;
-  }
-
-  .App-welcome-screen {
-    z-index: var(--zIndex-layerUI);
   }
 
   .App-bottom-bar {
@@ -487,19 +482,6 @@ body.excalidraw-cursor-resize * {
     }
   }
 
-  .help-icon {
-    @include outlineButtonStyles;
-    @include filledButtonOnCanvas;
-
-    width: var(--lg-button-size);
-    height: var(--lg-button-size);
-
-    svg {
-      width: var(--lg-icon-size);
-      height: var(--lg-icon-size);
-    }
-  }
-
   .reset-zoom-button {
     font-family: var(--ui-font);
   }
@@ -655,21 +637,6 @@ body.excalidraw-cursor-resize * {
       display: none;
     }
   }
-  .UserList-Wrapper {
-    margin: 0;
-    padding: 0;
-    border: none;
-    text-align: left;
-
-    legend {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 400;
-      margin: 0 0 0.25rem;
-      padding: 0;
-    }
-  }
-
   .main-menu-trigger {
     @include filledButtonOnCanvas;
   }

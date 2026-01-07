@@ -14,10 +14,6 @@ export const actionToggleGridMode = register({
   keywords: ["snap"],
   label: "labels.toggleGrid",
   viewMode: true,
-  trackEvent: {
-    category: "canvas",
-    predicate: (appState) => appState.gridModeEnabled,
-  },
   perform(elements, appState) {
     return {
       appState: {

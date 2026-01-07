@@ -49,12 +49,10 @@ export type ShortcutName =
       | "setFrameAsActiveTool"
       | "saveFileToDisk"
       | "saveToActiveFile"
-      | "toggleShortcuts"
       | "wrapSelectionInFrame"
     >
   | "saveScene"
   | "imageExport"
-  | "commandPalette"
   | "searchMenu";
 
 const shortcutMap: Record<ShortcutName, string[]> = {
@@ -63,10 +61,6 @@ const shortcutMap: Record<ShortcutName, string[]> = {
   loadScene: [getShortcutKey("CtrlOrCmd+O")],
   clearCanvas: [getShortcutKey("CtrlOrCmd+Delete")],
   imageExport: [getShortcutKey("CtrlOrCmd+Shift+E")],
-  commandPalette: [
-    getShortcutKey("CtrlOrCmd+/"),
-    getShortcutKey("CtrlOrCmd+Shift+P"),
-  ],
   cut: [getShortcutKey("CtrlOrCmd+X")],
   copy: [getShortcutKey("CtrlOrCmd+C")],
   paste: [getShortcutKey("CtrlOrCmd+V")],
@@ -114,7 +108,6 @@ const shortcutMap: Record<ShortcutName, string[]> = {
   setFrameAsActiveTool: [getShortcutKey("F")],
   saveFileToDisk: [getShortcutKey("CtrlOrCmd+S")],
   saveToActiveFile: [getShortcutKey("CtrlOrCmd+S")],
-  toggleShortcuts: [getShortcutKey("?")],
   searchMenu: [getShortcutKey("CtrlOrCmd+F")],
   wrapSelectionInFrame: [],
 };

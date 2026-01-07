@@ -18,8 +18,7 @@ export type ActionSource =
   | "ui"
   | "keyboard"
   | "contextMenu"
-  | "api"
-  | "commandPalette";
+  | "api";
 
 /** if false, the action should be prevented */
 export type ActionResult =
@@ -96,10 +95,8 @@ export type ActionName =
   | "changeTextAlign"
   | "changeVerticalAlign"
   | "toggleFullScreen"
-  | "toggleShortcuts"
   | "group"
   | "ungroup"
-  | "goToCollaborator"
   | "addToLibrary"
   | "changeRoundness"
   | "alignTop"
@@ -132,7 +129,6 @@ export type ActionName =
   | "setEmbeddableAsActiveTool"
   | "createContainerFromText"
   | "wrapTextInContainer"
-  | "commandPalette"
   | "autoResize"
   | "elementStats"
   | "searchMenu"
@@ -189,27 +185,6 @@ export interface Action<TData = any> {
     app: AppClassProperties,
   ) => boolean;
   checked?: (appState: Readonly<AppState>) => boolean;
-  trackEvent:
-    | false
-    | {
-        category:
-          | "toolbar"
-          | "element"
-          | "canvas"
-          | "export"
-          | "history"
-          | "menu"
-          | "collab"
-          | "hyperlink"
-          | "search_menu"
-          | "shape_switch";
-        action?: string;
-        predicate?: (
-          appState: Readonly<AppState>,
-          elements: readonly ExcalidrawElement[],
-          value: any,
-        ) => boolean;
-      };
   /** if set to `true`, allow action to be performed in viewMode.
    *  Defaults to `false` */
   viewMode?: boolean;

@@ -37,7 +37,6 @@ export const actionToggleElementLock = register({
     const selectedElements = getSelectedElements(elements, appState);
     return shouldLock(selectedElements) ? LockedIcon : UnlockedIcon;
   },
-  trackEvent: { category: "element" },
   predicate: (elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
     return (
@@ -155,7 +154,6 @@ export const actionToggleElementLock = register({
 
 export const actionUnlockAllElements = register({
   name: "unlockAllElements",
-  trackEvent: { category: "canvas" },
   viewMode: false,
   icon: UnlockedIcon,
   predicate: (elements, appState) => {
