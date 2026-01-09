@@ -1,0 +1,5 @@
+id,name,parent,role,team
+A,Program Lead,,Leadership,PMO
+B,Engineering Manager,A,Engineering,Platform
+C,Design Manager,A,Design,UX
+D,Initiative X,B;C,Program,Shared

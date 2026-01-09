@@ -1,0 +1,6 @@
+id,name,parent,role,location
+1,CEO,,Executive,NY
+2,CTO,1,Engineering,SF
+3,VP Sales,1,Sales,NY
+4,Engineer A,2,Platform,Remote
+5,Engineer B,2,Platform,Remote

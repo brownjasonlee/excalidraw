@@ -1,8 +1,9 @@
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction, syncInvalidIndices } from "@excalidraw/element";
 
 import { t } from "../i18n";
 import { fileOpen } from "../data/filesystem";
 import { isOrgChartData } from "../orgChart/types";
+import { parseOrgChartCSV } from "../orgChart/csv";
 import { createOrgChartElements } from "../orgChart/serialize";
 
 import { register } from "./register";
@@ -14,10 +15,18 @@ export const actionImportOrgChart = register({
     try {
       const file = await fileOpen({
         description: "Org chart data",
-        extensions: ["json"],
+        extensions: ["json", "csv"],
       });
       const text = await file.text();
-      const parsed = JSON.parse(text);
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(text);
+        if (!isOrgChartData(parsed)) {
+          parsed = parseOrgChartCSV(text);
+        }
+      } catch {
+        parsed = parseOrgChartCSV(text);
+      }
       if (!isOrgChartData(parsed)) {
         return {
           appState: {
@@ -42,8 +51,9 @@ export const actionImportOrgChart = register({
         },
         {},
       );
+      const mergedElements = syncInvalidIndices([...elements, ...newElements]);
       return {
-        elements: [...elements, ...newElements],
+        elements: mergedElements,
         appState: {
           ...appState,
           selectedElementIds,

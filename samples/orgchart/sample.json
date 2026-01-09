@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "nodes": [
+    {
+      "id": "n1",
+      "name": "CEO",
+      "x": 100,
+      "y": 80,
+      "width": 220,
+      "height": 110,
+      "attributes": [
+        { "id": "a1", "name": "role", "value": "Executive", "color": "#ffcc00", "display": "label" }
+      ]
+    },
+    {
+      "id": "n2",
+      "name": "CTO",
+      "x": 100,
+      "y": 240,
+      "width": 220,
+      "height": 110,
+      "attributes": [
+        { "id": "a2", "name": "team", "value": "Engineering", "color": "#00aaff", "display": "label" }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r1",
+      "from": "n1",
+      "to": "n2",
+      "label": "manages",
+      "cardinality": "1..n",
+      "attributes": [
+        { "id": "ra1", "name": "since", "value": "2022", "color": "#88cc66", "display": "label" }
+      ]
+    }
+  ]
+}

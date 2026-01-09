@@ -96,6 +96,7 @@
     "orgChartSetLabelPrompt": "Label for this node",
     "orgChartSetAttributes": "Set org attributes",
     "orgChartSetAttributesPrompt": "Attributes (name=value#color; ...)",
+    "orgChartExportPrompt": "Export format (json/csv)",
     "untitled": "Untitled",
     "name": "Name",
     "yourName": "Your name",

@@ -45,6 +45,8 @@ import { getOrgChartNodeLabelText } from "./labels";
 
 const DEFAULT_NODE_WIDTH = 200;
 const DEFAULT_NODE_HEIGHT = 100;
+const DEFAULT_ROW_GAP = 80;
+const DEFAULT_COLUMN_GAP = 40;
 
 const getOrgChartData = (
   element: ExcalidrawElement,
@@ -210,6 +212,22 @@ export const createOrgChartElements = (
   const elementByNodeId = new Map<string, ExcalidrawBindableElement>();
   const elementsMap = new Map<string, ExcalidrawElement>();
   const idMap = new Map<string, string>();
+  const nodesNeedLayout = data.nodes.every(
+    (node) =>
+      (node.x ?? 0) === 0 &&
+      (node.y ?? 0) === 0 &&
+      (node.width ?? 0) === 0 &&
+      (node.height ?? 0) === 0,
+  );
+
+  const normalizedNodes = nodesNeedLayout
+    ? layoutOrgChartNodes(data)
+    : data.nodes.map((node) => ({
+        ...node,
+        width: node.width && node.width > 0 ? node.width : DEFAULT_NODE_WIDTH,
+        height:
+          node.height && node.height > 0 ? node.height : DEFAULT_NODE_HEIGHT,
+      }));
 
   const getUniqueId = (id: string) => {
     if (!existingIds.has(id) && !idMap.has(id)) {
@@ -222,7 +240,7 @@ export const createOrgChartElements = (
     return nextId;
   };
 
-  data.nodes.forEach((node) => {
+  normalizedNodes.forEach((node) => {
     const nodeId = getUniqueId(node.id);
     const nodeElement = newElement({
       id: nodeId,
@@ -412,6 +430,91 @@ export const createOrgChartElements = (
   });
 
   return getNonDeletedElements(elements);
+};
+
+const layoutOrgChartNodes = (data: OrgChartData): OrgChartData["nodes"] => {
+  const incoming = new Map<string, number>();
+  const outgoing = new Map<string, string[]>();
+
+  data.relationships.forEach((rel) => {
+    const from = rel.from;
+    const to = rel.to;
+    if (!from || !to) {
+      return;
+    }
+    const list = outgoing.get(from) || [];
+    list.push(to);
+    outgoing.set(from, list);
+    incoming.set(to, (incoming.get(to) || 0) + 1);
+  });
+
+  const depthById = new Map<string, number>();
+  const roots = data.nodes.filter((node) => !incoming.has(node.id));
+
+  const queue: Array<{ id: string; depth: number }> = roots.map((node) => ({
+    id: node.id,
+    depth: 0,
+  }));
+
+  roots.forEach((node) => depthById.set(node.id, 0));
+
+  while (queue.length) {
+    const current = queue.shift()!;
+    const children = outgoing.get(current.id) || [];
+    children.forEach((childId) => {
+      const nextDepth = current.depth + 1;
+      const existingDepth = depthById.get(childId);
+      if (existingDepth == null || nextDepth < existingDepth) {
+        depthById.set(childId, nextDepth);
+        queue.push({ id: childId, depth: nextDepth });
+      }
+    });
+  }
+
+  data.nodes.forEach((node) => {
+    if (!depthById.has(node.id)) {
+      depthById.set(node.id, 0);
+    }
+  });
+
+  const rows = new Map<number, OrgChartData["nodes"]>();
+  data.nodes.forEach((node) => {
+    const depth = depthById.get(node.id) ?? 0;
+    const row = rows.get(depth) || [];
+    row.push({
+      ...node,
+      width:
+        node.width && node.width > 0 ? node.width : DEFAULT_NODE_WIDTH,
+      height:
+        node.height && node.height > 0 ? node.height : DEFAULT_NODE_HEIGHT,
+    });
+    rows.set(depth, row);
+  });
+
+  const sortedDepths = Array.from(rows.keys()).sort((a, b) => a - b);
+  let currentY = 0;
+  const positioned: OrgChartData["nodes"] = [];
+
+  sortedDepths.forEach((depth) => {
+    const row = rows.get(depth) || [];
+    const rowHeight = Math.max(...row.map((node) => node.height || 0));
+    const rowWidth =
+      row.reduce((sum, node) => sum + (node.width || 0), 0) +
+      DEFAULT_COLUMN_GAP * Math.max(0, row.length - 1);
+    let currentX = -rowWidth / 2;
+
+    row.forEach((node) => {
+      positioned.push({
+        ...node,
+        x: currentX,
+        y: currentY,
+      });
+      currentX += (node.width || 0) + DEFAULT_COLUMN_GAP;
+    });
+    currentY += rowHeight + DEFAULT_ROW_GAP;
+  });
+
+  return positioned;
 };
 
 export const getOrgChartBounds = (elements: readonly ExcalidrawElement[]) => {

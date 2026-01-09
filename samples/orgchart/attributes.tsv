@@ -1,0 +1,5 @@
+id	name	parent	role	location	level#color
+10	Founder		Executive	NY	L1#ffcc00
+20	COO	10	Operations	NY	L2#00aaff
+30	VP Eng	10	Engineering	SF	L2#00aaff
+40	Staff Eng	30	Engineering	Remote	L3#88cc66
