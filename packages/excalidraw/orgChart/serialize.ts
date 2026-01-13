@@ -12,6 +12,7 @@ import { pointFrom } from "@excalidraw/math";
 
 import {
   calculateFixedPointForNonElbowArrowBinding,
+  computeBoundTextPosition,
   getBoundTextElement,
   getCommonBounds,
   getElementBounds,
@@ -157,14 +158,25 @@ export const buildOrgChartData = (
   };
 };
 
-const getCenterPoint = (
+const getBottomCenterPoint = (
   element: ExcalidrawElement,
   elementsMap: Map<string, ExcalidrawElement>,
 ) => {
-  const [x1, y1, x2, y2] = getElementBounds(element, elementsMap);
+  const [x1, , x2, y2] = getElementBounds(element, elementsMap);
   return {
     x: (x1 + x2) / 2,
-    y: (y1 + y2) / 2,
+    y: y2,
+  };
+};
+
+const getTopCenterPoint = (
+  element: ExcalidrawElement,
+  elementsMap: Map<string, ExcalidrawElement>,
+) => {
+  const [x1, y1, x2] = getElementBounds(element, elementsMap);
+  return {
+    x: (x1 + x2) / 2,
+    y: y1,
   };
 };
 
@@ -185,8 +197,8 @@ const createBoundText = (
   const metrics = measureText(text, font, lineHeight);
 
   const textElement: ExcalidrawTextElement = newTextElement({
-    x: container.x + (container.width - metrics.width) / 2,
-    y: container.y + (container.height - metrics.height) / 2,
+    x: container.x,
+    y: container.y,
     text,
     width: metrics.width,
     height: metrics.height,
@@ -199,6 +211,15 @@ const createBoundText = (
     autoResize: true,
     strokeColor: container.strokeColor,
   });
+
+  const elementsMap = arrayToMap([container, textElement]);
+  const { x, y } = computeBoundTextPosition(
+    container,
+    textElement,
+    elementsMap,
+  );
+  textElement.x = x;
+  textElement.y = y;
 
   return textElement;
 };
@@ -301,8 +322,8 @@ export const createOrgChartElements = (
     }
 
     const relId = getUniqueId(rel.id);
-    const startCenter = getCenterPoint(startElement, elementsMap);
-    const endCenter = getCenterPoint(endElement, elementsMap);
+    const startCenter = getBottomCenterPoint(startElement, elementsMap);
+    const endCenter = getTopCenterPoint(endElement, elementsMap);
 
     const startPoint = pointFrom(startCenter.x, startCenter.y);
     const endPoint = pointFrom(endCenter.x, endCenter.y);
